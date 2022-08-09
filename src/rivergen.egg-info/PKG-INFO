@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: rivergen
+Version: 1.0.0
+Summary: Procedual Road/River Segment Generator for NN Training
+Home-page: https://github.com/nikpau/segGen
+Author: Niklas Paulig
+Author-email: niklas.paulig@tu-dresden.de
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+
+#### River/Road Segment Generator
+

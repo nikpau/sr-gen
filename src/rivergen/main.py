@@ -51,7 +51,7 @@ def write_to_file(
         for metric in metrics:
             f.write("{} {} {} {} {} {} {}\n".format(*metric))
 
-def main(segments: int) -> None:
+def build(segments: int) -> None:
 
     parent = "gen"
     # Check if `gen` folder exists. If not, create it.
@@ -94,5 +94,3 @@ def main(segments: int) -> None:
     t.start()
     write_to_file(coords,metrics,filepath)
     done = True
-
-main(200)
