@@ -21,13 +21,3 @@ def current_map(m: mesh.Segment) -> CurrentMap:
         yout[row] = ones[row] * -lin[row]
 
     return xout,yout
-
-m = mesh.generate(30)
-d = depth.depth_map(m,2)
-cx,cy = current_map(m)
-
-#plt.scatter(m.xx,m.yy,c=d,cmap=cm.gray)
-plt.contourf(m.xx,m.yy,d,cmap=cm.ocean,levels = np.linspace(0,np.max(d),20))
-plt.quiver(m.xx,m.yy,cx,cy,scale = 100)
-plt.axis("equal")
-plt.show()
