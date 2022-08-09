@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import TypeVar
 import numpy as np
 import mesh
 
