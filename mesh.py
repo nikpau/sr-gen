@@ -139,7 +139,7 @@ def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
 
     xx,yy = xx.T,yy.T
     xxal,yyal = _attach_and_align(xx,yy,anchor,prev_segment.angle,rot,curvature)
-    xxal, yyal = xxal[1:,:], yyal[1:,:] # Remove overlap
+    xxal, yyal = xxal[1:-1,:], yyal[1:-1,:] # Remove overlap
     
     return CurvedSegment(
         xx=xxal,yy=yyal,
@@ -237,7 +237,7 @@ def _evenly_spaced_points(
     Generate evenly spaced points on a circle
     """
     # Angle in clockwise direction
-    t = np.linspace(0, abs(curve_by), abs(npoints), endpoint=False)
+    t = np.linspace(0, abs(curve_by), abs(npoints), endpoint=True)
     x = anchor.x + r * np.cos(t)
     y = anchor.y + r * np.sin(t)
     return x,y
@@ -318,8 +318,8 @@ def generate(nsegments: int, save_to_file: bool = False, filename: str = None) -
 
     for seg in range(nsegments-1):
         rnd_len = random.randint(400,2000)
-        rnd_radius = random.randint(2000,5000)
-        rnd_angle = random.choice([-1,1])*dtr(random.randint(45,80))
+        rnd_radius = random.randint(1000,5000)
+        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,60))
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)
