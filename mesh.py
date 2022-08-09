@@ -300,12 +300,10 @@ def _clip_to_pi(angle: float) -> float:
     """Clip an angle to the range [-pi,pi]"""
     return np.mod(angle+PI,2*PI)-PI
 
-def generate(nsegments: int, save_to_file: bool = False, filename: str = None) -> Segment:
+def generate(nsegments: int, filename: str = None) -> Segment:
     """
     Generate a sequence of random Mesh Segments
     """
-    if save_to_file and filename == None:
-        filename = str(input("Please enter filename:"))
     
     # First segment is always straight
     first_length = random.randint(400,2000)
@@ -330,6 +328,6 @@ def generate(nsegments: int, save_to_file: bool = False, filename: str = None) -
         out = combine(out,new)
         prev = new
 
-    if save_to_file:
+    if filename is not None:
         np.savetxt(f"{filename}.txt",seg_list,fmt="%s")
     return out
