@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
-import mesh
+from . import mesh
 
 @dataclass
 class CurrentMap:
@@ -26,11 +26,13 @@ def current_map(m: mesh.Segment, v: float) -> CurrentMap:
     ones= np.ones_like(m.yy)
     xout, yout = np.empty_like(ones), np.empty_like(ones)
 
-    lin = np.linspace(-v,v,ones.shape[0])
-    lin = list(map(np.sin,lin))
+    linx = np.linspace(-v,v,ones.shape[0])
+    linx = list(map(np.sin,linx))
+
+    liny = np.linspace(0,v,ones.shape[0])
 
     for row in range(ones.shape[0]):
-        xout[row] = ones[row] * lin[row]
-        yout[row] = ones[row] * -lin[row]
+        xout[row] = ones[row] * linx[row]
+        yout[row] = ones[row] * -liny[row]
 
     return CurrentMap(xout, yout)

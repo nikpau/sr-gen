@@ -1,10 +1,8 @@
 from typing import TypeVar
 
-from matplotlib import cm
-import mesh
+from . import mesh
 import math
 import numpy as np
-import matplotlib.pyplot as plt
 
 DepthMap = TypeVar("DepthMap")
 

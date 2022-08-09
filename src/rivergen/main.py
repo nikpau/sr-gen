@@ -4,9 +4,7 @@ import sys
 import threading
 import time
 import numpy as np
-import mesh
-import currents
-import depth
+from rivergen import mesh, depth, currents
 from datetime import datetime
 from typing import Generator, Tuple
 
@@ -51,7 +49,7 @@ def write_to_file(
         for metric in metrics:
             f.write("{} {} {} {} {} {} {}\n".format(*metric))
 
-def build(segments: int) -> None:
+def build(segments: int, var: float, vel: float) -> os.PathLike:
 
     parent = "gen"
     # Check if `gen` folder exists. If not, create it.
@@ -68,11 +66,11 @@ def build(segments: int) -> None:
     print("Mesh generated.")
 
     # Generate depth map
-    d = depth.depth_map(m,var=2)
+    d = depth.depth_map(m,var=var)
     print("Depth map generated.")
 
     # Generate current map
-    c = currents.current_map(m,v=1.5)
+    c = currents.current_map(m,v=vel)
     print("Current map generated.")
 
     # Merge coordinates and metrics
@@ -94,3 +92,5 @@ def build(segments: int) -> None:
     t.start()
     write_to_file(coords,metrics,filepath)
     done = True
+
+    return filepath
