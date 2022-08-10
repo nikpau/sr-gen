@@ -9,7 +9,6 @@ from collections import namedtuple
 from dataclasses import dataclass
 from math import isclose
 from typing import Tuple, TypeVar, Union
-import matplotlib.pyplot as plt
 
 import numpy as np
 
@@ -97,7 +96,7 @@ def straight_segment(start: Union[Point,CurvedSegment,StraightSegment],
     xxrot, yyrot = _rotate(xx,yy,start,-angle)
     xxrot, yyrot = xxrot[1:,:], yyrot[1:,:] # Remove overlap
 
-    return StraightSegment(xxrot, yyrot,length, angle)
+    return StraightSegment(xxrot, yyrot, length, angle)
 
 # Curved segment generator
 def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
@@ -137,8 +136,14 @@ def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
         x,y = _evenly_spaced_points(r,n_equal_points,rot,anchor)
         xx[i,:], yy[i,:] = x,y
 
+    # Transpose to get the circle cross-section
+    # become the columns
     xx,yy = xx.T,yy.T
+    
+    # Rotate and flip segment such that it 
+    # aligns with previous segment
     xxal,yyal = _attach_and_align(xx,yy,anchor,prev_segment.angle,rot,curvature)
+    
     xxal, yyal = xxal[1:-1,:], yyal[1:-1,:] # Remove overlap
     
     return CurvedSegment(
@@ -168,19 +173,19 @@ def _attach_and_align(
     Rotate and flip a given segment such that it aligns with the previous segment
     """
     if curvature == Curvature.right:
-        if prev_angle > 0:
+        if prev_angle > 0: # Quadrant I & IV
             xx = _vertical_reflect(xx,anchor)
             xx, yy = np.flip(xx,axis=1), np.flip(yy,axis=1)
             xxal, yyal = _rotate(xx,yy,anchor,-prev_angle)
-        else:
+        else: # Quadrant II & III
             xx = _vertical_reflect(xx,anchor)
             yy = _horizontal_reflect(yy,anchor)
             xx,yy = np.flip(xx), np.flip(yy)
             xxal,yyal = _rotate(xx,yy,anchor,-(prev_angle+rotation))
     else:
-        if prev_angle > 0:
+        if prev_angle > 0: # Quadrant I & IV
             xxal, yyal = _rotate(xx,yy,anchor,-prev_angle)
-        else:            
+        else: # Quadrant II & III
             xx = _vertical_reflect(xx,anchor)
             yy = _horizontal_reflect(yy,anchor)
             xxal, yyal = _rotate(xx,yy,anchor,PI-prev_angle)
@@ -199,7 +204,7 @@ def _anchor(
     # crossing (x0,y0) and (x1,y1)
     m = (y1 - y0) / (x1 - x0)
 
-    if isclose(m,0,abs_tol=1e-9):
+    if isclose(m,0,abs_tol=1e-9): # avoid underflow 
         x_anchor = x1
         if ((prev_seg.angle > 0 and curvature == Curvature.left)
             or (prev_seg.angle < 0 and curvature == Curvature.right)):
@@ -245,7 +250,8 @@ def _evenly_spaced_points(
 def _rotate(xx: MeshGrid, yy: MeshGrid, anchor: Point, rot: float) -> MeshGrid:
     """
     Rotate a MeshGrid of around an 
-    anchor point by `rot` radians
+    anchor point by `rot` radians.
+    Positive `rot` values rotate counter-clockwise
     """
     a = anchor
     xxrot = (xx-a.x)*np.cos(rot)-(yy-a.y)*np.sin(rot)+a.x
@@ -282,7 +288,10 @@ def _endpoints(
 def combine(
     seg1: Union[StraightSegment,CurvedSegment], 
     seg2: Union[StraightSegment,CurvedSegment]) -> Segment:
-    """Combines two segments together"""
+    """
+    Combines two segments together
+    """
+    
     xxcomb = np.vstack([seg1.xx, seg2.xx])
     yycomb = np.vstack([seg1.yy, seg2.yy])
     totlen = seg1.length+seg2.length
@@ -298,7 +307,7 @@ def rtd(angle: float) -> float:
 
 def _clip_to_pi(angle: float) -> float:
     """Clip an angle to the range [-pi,pi]"""
-    return np.mod(angle+PI,2*PI)-PI
+    return (angle+PI) % (2*PI) - PI
 
 def generate(nsegments: int, filename: str = None) -> Segment:
     """

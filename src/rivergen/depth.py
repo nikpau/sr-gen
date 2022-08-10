@@ -9,9 +9,10 @@ DepthMap = TypeVar("DepthMap")
 # Function to generate water depth according 
 # to a flipped standard normal distribution
 def depth_map(m: mesh.Segment, var: float) -> DepthMap:
-    """Generate a map of depths sampled from a
-    normal distribution centered around the mid-
-    index of m. 
+    """
+    Generate a map of depths sampled from a
+    flipped normal distribution centered around 
+    the mid-index of m. 
 
     Args:
         m (mesh.MeshGrid): MeshGrid Segment

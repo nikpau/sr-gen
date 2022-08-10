@@ -50,8 +50,33 @@ def write_to_file(
             f.write("{} {} {} {} {} {} {}\n".format(*metric))
 
 def build(segments: int, var: float, vel: float) -> os.PathLike:
+    """
+    Package main function. Generates xy 
+    coordinates, depths and current fields
+    from randomly sized curves and lines. 
+    Saves the output as whitespace separated 
+    .txt file in a folder named by execution time of
+    the script.
+    
+    The files containing coordinates (coords.txt)
+    have two columns [x,y].
+    (metrics.txt) has seven colums 
+    [_, current_vel_y,current_vel_x,water_depth, _, _, current_velocity]
+    
+    This format is currently very specific. In order to change it
+    see the `merge_metrics()` function
+
+    Args:
+        segments (int): Number of segments making up the river/road
+        var (float): Variability of depth distribution
+        vel (float): maximum current velocity
+
+    Returns:
+        os.PathLike: path to folder containing generated files
+    """
 
     parent = "gen"
+    
     # Check if `gen` folder exists. If not, create it.
     if not os.path.isdir(parent):
         os.mkdir(parent)
@@ -78,7 +103,7 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
     metrics = merge_metrics(d,c)
     print("Merged.")
 
-    # Write to file
+    # Loading animation, beause why not?
     done = False
     def animate():
         for c in itertools.cycle(['|', '/', '-', '\\']):
@@ -90,7 +115,10 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
         sys.stdout.write('\nDone!')
     t = threading.Thread(target=animate)
     t.start()
+
+    # Write to file
     write_to_file(coords,metrics,filepath)
+
     done = True
 
     return filepath
