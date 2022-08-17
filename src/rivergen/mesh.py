@@ -12,9 +12,9 @@ from typing import Tuple, TypeVar, Union
 
 import numpy as np
 
-BPD = 20 # base point distance [m]
-GP = 26 # grid points
-BREADTH = 500 # [m]
+GP = 26 #  No. of grid points per segment width
+BPD = 20 # distance between gridpoints [m]
+BREADTH = 500 # [m] ((GP-1)*BPD)
 TWOPI = 2*np.pi
 PI = np.pi
 
@@ -155,13 +155,13 @@ def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
     
 def _vertical_reflect(xx: MeshGrid, anchor: Point) -> MeshGrid:
     """
-    Reflect a MeshGrid about the line x = anchor.x
+    Reflect MeshGrid about the line x = anchor.x
     """
     return 2*anchor.x - xx
 
 def _horizontal_reflect(yy: MeshGrid, anchor: Point) -> MeshGrid:
     """
-    Reflect a MeshGrid about the line y = anchor.y
+    Reflect MeshGrid about the line y = anchor.y
     """
     return 2*anchor.y - yy
 
@@ -299,11 +299,11 @@ def combine(
 
 def dtr(angle: float) -> float:
     """Convert degrees to radians"""
-    return angle*np.pi/180
+    return angle*PI/180
 
 def rtd(angle: float) -> float:
     """Convert radians to degrees"""
-    return angle*180/np.pi
+    return angle*180/PI
 
 def _clip_to_pi(angle: float) -> float:
     """Clip an angle to the range [-pi,pi]"""

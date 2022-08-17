@@ -20,7 +20,7 @@ def current_map(m: mesh.Segment, v: float) -> CurrentMap:
         v (float): maximum speed of the current
 
     Returns:
-        CurrentMap: Curren of same x or y shape as imput segment.
+        CurrentMap: Current of same x or y shape as imput segment.
     """
     
     ones= np.ones_like(m.yy)
