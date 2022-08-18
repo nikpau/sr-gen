@@ -8,7 +8,7 @@ DepthMap = TypeVar("DepthMap")
 
 # Function to generate water depth according 
 # to a flipped standard normal distribution
-def depth_map(m: mesh.Segment, var: float) -> DepthMap:
+def depth_map(m: mesh.BaseSegment, var: float) -> DepthMap:
     """
     Generate a map of depths sampled from a
     flipped normal distribution centered around 
@@ -23,7 +23,7 @@ def depth_map(m: mesh.Segment, var: float) -> DepthMap:
     """
     out = []
     def _wd_gen(x,rnd1,rnd2):
-        return 10*math.exp(-5e-5*rnd1*(x+rnd2)**4)
+        return 7*math.exp(-5e-5*rnd1*(x+rnd2)**4)
     
     depth_linspace = np.linspace(-20,20,mesh.GP) 
     
