@@ -9,7 +9,7 @@ class CurrentMap:
     x: np.ndarray
     y: np.ndarray 
 
-def current_map(m: mesh.Segment, v: float) -> CurrentMap:
+def current_map(m: mesh.BaseSegment, v: float) -> CurrentMap:
     """Generate a current map for a given mesh.
     Current direction follows a sinusoidal pattern
     over the length of the segment. Speed ranges

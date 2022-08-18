@@ -3,12 +3,13 @@ import os
 import sys
 import threading
 import time
+import uuid
 import numpy as np
-from rivergen import mesh, depth, currents
+from rivergen import mesh, depth, currents, options
 from datetime import datetime
 from typing import Generator, Tuple
 
-def merge_coords(m: mesh.Segment) -> Generator[Tuple, None, None]:
+def merge_coords(m: mesh.BaseSegment) -> Generator[Tuple, None, None]:
     """Merge coordinate mesh into a generator for further processing.
     """
     mx = np.hstack(m.xx)
@@ -42,12 +43,12 @@ def write_to_file(
     """Write to file.
     """
     with open(f"{folder_name}/coords.txt", "w") as f:
-        for coord in coords:
-            f.write("{} {}\n".format(*coord))
+        for row in coords:
+            f.write("{} {}\n".format(*row))
 
     with open(f"{folder_name}/metrics.txt", "w") as f:
-        for metric in metrics:
-            f.write("{} {} {} {} {} {} {}\n".format(*metric))
+        for row in metrics:
+            f.write("{} {} {} {} {} {} {}\n".format(*row))
 
 def build(segments: int, var: float, vel: float) -> os.PathLike:
     """
@@ -55,8 +56,7 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
     coordinates, depths and current fields
     from randomly sized curves and lines. 
     Saves the output as whitespace separated 
-    .txt file in a folder named by execution time of
-    the script.
+    .txt file in a folder named by some random hex string.
     
     The files containing coordinates (coords.txt)
     have two columns [x,y].
@@ -82,26 +82,30 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
         os.mkdir(parent)
 
     # Create folder
-    folder_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    folder_name = uuid.uuid4().hex
     filepath = f"{parent}/{folder_name}"
     os.mkdir(filepath)
 
     # Generate mesh
     m = mesh.generate(segments,f"{parent}/{folder_name}/Segments")
-    print("Mesh generated.")
+    if options.VERBOSE:
+        print("Mesh generated.")
 
     # Generate depth map
     d = depth.depth_map(m,var=var)
-    print("Depth map generated.")
+    if options.VERBOSE:
+        print("Depth map generated.")
 
     # Generate current map
     c = currents.current_map(m,v=vel)
-    print("Current map generated.")
+    if options.VERBOSE:
+        print("Current map generated.")
 
     # Merge coordinates and metrics
     coords = merge_coords(m)
     metrics = merge_metrics(d,c)
-    print("Merged.")
+    if options.VERBOSE:
+        print("Merged.")
 
     # Loading animation, beause why not?
     done = False
@@ -113,8 +117,9 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
             sys.stdout.flush()
             time.sleep(0.1)
         sys.stdout.write('\nDone!')
-    t = threading.Thread(target=animate)
-    t.start()
+    if options.VERBOSE:
+        t = threading.Thread(target=animate)
+        t.start()
 
     # Write to file
     write_to_file(coords,metrics,filepath)

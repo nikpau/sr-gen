@@ -30,13 +30,13 @@ class Curvature:
     right: str = "right"
 
 @dataclass
-class Segment:
+class BaseSegment:
     xx: np.ndarray
     yy: np.ndarray
     length: float
 
 @dataclass
-class StraightSegment(Segment):
+class StraightSegment(BaseSegment):
     angle: float
 
     def __repr__(self):
@@ -287,7 +287,7 @@ def _endpoints(
 
 def combine(
     seg1: Union[StraightSegment,CurvedSegment], 
-    seg2: Union[StraightSegment,CurvedSegment]) -> Segment:
+    seg2: Union[StraightSegment,CurvedSegment]) -> BaseSegment:
     """
     Combines two segments together
     """
@@ -295,7 +295,7 @@ def combine(
     xxcomb = np.vstack([seg1.xx, seg2.xx])
     yycomb = np.vstack([seg1.yy, seg2.yy])
     totlen = seg1.length+seg2.length
-    return Segment(xxcomb, yycomb, totlen)
+    return BaseSegment(xxcomb, yycomb, totlen)
 
 def dtr(angle: float) -> float:
     """Convert degrees to radians"""
@@ -309,14 +309,14 @@ def _clip_to_pi(angle: float) -> float:
     """Clip an angle to the range [-pi,pi]"""
     return (angle+PI) % (2*PI) - PI
 
-def generate(nsegments: int, filename: str = None) -> Segment:
+def generate(nsegments: int, filename: str = None) -> BaseSegment:
     """
     Generate a sequence of random Mesh Segments
     """
     
     # First segment is always straight
     first_length = random.randint(400,2000)
-    angle = 0
+    angle = random.choice([-1,1])*dtr(random.randint(5,80))
     seg_list = []
     prev = straight_segment(Point(0,0), first_length, angle)
 
