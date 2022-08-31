@@ -208,14 +208,14 @@ def _anchor(
         m = (y1 - y0) / (x1 - x0)
         one_over_m = 1/m
 
-    if isclose(m,0,abs_tol=1e-9): # avoid underflow 
-        x_anchor = x1
-        if ((prev_seg.angle > 0 and curvature == Curvature.left)
-            or (prev_seg.angle < 0 and curvature == Curvature.right)):
-            y_anchor = y1 + radius
-        else:
-            y_anchor = y1 - radius
-        return Point(x_anchor,y_anchor)
+        if isclose(m,0,abs_tol=1e-9): # avoid underflow 
+            x_anchor = x1
+            if ((prev_seg.angle > 0 and curvature == Curvature.left)
+                or (prev_seg.angle < 0 and curvature == Curvature.right)):
+                y_anchor = y1 + radius
+            else:
+                y_anchor = y1 - radius
+            return Point(x_anchor,y_anchor)
 
     lineq = lambda x: -one_over_m*x+(y1+one_over_m*x1)
     
