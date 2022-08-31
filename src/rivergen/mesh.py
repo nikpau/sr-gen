@@ -204,8 +204,8 @@ def _anchor(
     # Find linear equation perpendicular to the line
     # crossing (x0,y0) and (x1,y1)
     if (x1-x0) == 0:
-        x_anchor = x1
-        y_anchor = x1+ s*radius
+        x_anchor = x1+ s*radius
+        y_anchor = y1
         return Point(x_anchor,y_anchor)
 
     m = (y1 - y0) / (x1 - x0)
