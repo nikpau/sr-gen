@@ -203,7 +203,7 @@ def _anchor(
     # Find linear equation perpendicular to the line
     # crossing (x0,y0) and (x1,y1)
     if (x1 - x0) == 0:
-        one_over_m = 0
+        one_over_m = np.inf
     else:
         m = (y1 - y0) / (x1 - x0)
         one_over_m = 1/m
@@ -222,7 +222,7 @@ def _anchor(
     # Find x coordinate of point with distance `radius` apart
     # from point (x1,y1) using the circle equation
     s = _anchor_switch(prev_seg.angle, curvature)
-    x_anchor = x1 + s*(radius/np.sqrt(1+((1/m)**2)))
+    x_anchor = x1 + s*(radius/np.sqrt(1+(one_over_m**2))) if one_over_m !=np.inf else x1
     y_anchor = lineq(x_anchor)
     
     return Point(x_anchor,y_anchor)
