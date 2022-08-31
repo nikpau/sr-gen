@@ -25,7 +25,7 @@ def depth_map(m: mesh.BaseSegment, var: float) -> DepthMap:
     def _wd_gen(x,rnd1,rnd2):
         return 7*math.exp(-5e-5*rnd1*(x+rnd2)**4)
     
-    depth_linspace = np.linspace(-20,20,mesh.GP) 
+    depth_linspace = np.linspace(-15,15,mesh.GP) 
     
     for i in range(len(m.yy)):
         r = []
