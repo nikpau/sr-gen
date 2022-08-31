@@ -202,7 +202,11 @@ def _anchor(
     
     # Find linear equation perpendicular to the line
     # crossing (x0,y0) and (x1,y1)
-    m = (y1 - y0) / (x1 - x0)
+    if (x1 - x0) == 0:
+        one_over_m = 0
+    else:
+        m = (y1 - y0) / (x1 - x0)
+        one_over_m = 1/m
 
     if isclose(m,0,abs_tol=1e-9): # avoid underflow 
         x_anchor = x1
@@ -213,7 +217,7 @@ def _anchor(
             y_anchor = y1 - radius
         return Point(x_anchor,y_anchor)
 
-    lineq = lambda x: -(1/m)*x+(y1+(1/m)*x1)
+    lineq = lambda x: -one_over_m*x+(y1+one_over_m*x1)
     
     # Find x coordinate of point with distance `radius` apart
     # from point (x1,y1) using the circle equation
@@ -326,7 +330,7 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
     for seg in range(nsegments-1):
         rnd_len = random.randint(400,2000)
         rnd_radius = random.randint(1000,5000)
-        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,80))
+        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,45))
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)
