@@ -199,30 +199,31 @@ def _anchor(
     
     x1,y1 = open.x, open.y
     x0,y0 = con.x, con.y
+    s = _anchor_switch(prev_seg.angle, curvature)
     
     # Find linear equation perpendicular to the line
     # crossing (x0,y0) and (x1,y1)
-    if (x1 - x0) == 0:
-        one_over_m = np.inf
-    else:
-        m = (y1 - y0) / (x1 - x0)
-        one_over_m = 1/m
+    if (x1-x0) == 0:
+        x_anchor = x1
+        y_anchor = x1+ s*radius
+        return Point(x_anchor,y_anchor)
 
-        if isclose(m,0,abs_tol=1e-9): # avoid underflow 
-            x_anchor = x1
-            if ((prev_seg.angle > 0 and curvature == Curvature.left)
-                or (prev_seg.angle < 0 and curvature == Curvature.right)):
-                y_anchor = y1 + radius
-            else:
-                y_anchor = y1 - radius
-            return Point(x_anchor,y_anchor)
+    m = (y1 - y0) / (x1 - x0)
 
-    lineq = lambda x: -one_over_m*x+(y1+one_over_m*x1)
+    if isclose(m,0,abs_tol=1e-9): # avoid underflow 
+        x_anchor = x1
+        if ((prev_seg.angle > 0 and curvature == Curvature.left)
+            or (prev_seg.angle < 0 and curvature == Curvature.right)):
+            y_anchor = y1 + radius
+        else:
+            y_anchor = y1 - radius
+        return Point(x_anchor,y_anchor)
+
+    lineq = lambda x: -(1/m)*x+(y1+(1/m)*x1)
     
     # Find x coordinate of point with distance `radius` apart
     # from point (x1,y1) using the circle equation
-    s = _anchor_switch(prev_seg.angle, curvature)
-    x_anchor = x1 + s*(radius/np.sqrt(1+(one_over_m**2))) if one_over_m !=np.inf else x1
+    x_anchor = x1 + s*(radius/np.sqrt(1+((1/m)**2)))
     y_anchor = lineq(x_anchor)
     
     return Point(x_anchor,y_anchor)
