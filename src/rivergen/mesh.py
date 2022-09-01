@@ -87,7 +87,7 @@ def straight_segment(start: Union[Point,CurvedSegment,StraightSegment],
     if isinstance(start,(StraightSegment,CurvedSegment)):
         start = _endpoints(start,Curvature.left).open
     
-    x = np.linspace(start.x, start.x + op.BREADTH, op.GP)
+    x = np.linspace(start.x, start.x + ((op.GP-1)*op.BPD), op.GP)
     y = np.linspace(start.y, start.y + length, length//op.BPD)
     xx,yy  = np.meshgrid(x,y)
 
@@ -296,8 +296,8 @@ def combine(
     Combines two segments together
     """
     
-    xxcomb = np.vstack([seg1.xx, seg2.xx])
-    yycomb = np.vstack([seg1.yy, seg2.yy])
+    xxcomb = np.vstack((seg1.xx, seg2.xx))
+    yycomb = np.vstack((seg1.yy, seg2.yy))
     totlen = seg1.length+seg2.length
     return BaseSegment(xxcomb, yycomb, totlen)
 
