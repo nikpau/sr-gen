@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from . import mesh
+from . import mesh, options
 import math
 import numpy as np
 
@@ -25,11 +25,11 @@ def depth_map(m: mesh.BaseSegment, var: float) -> DepthMap:
     def _wd_gen(x,rnd1,rnd2):
         return 7*math.exp(-5e-5*rnd1*(x+rnd2)**4)
     
-    depth_linspace = np.linspace(-15,15,mesh.GP) 
+    depth_linspace = np.linspace(-15,15,options.GP) 
     
     for i in range(len(m.yy)):
         r = []
-        for j in range(mesh.GP):
+        for j in range(options.GP):
             rnd1 = 0.7*math.sin(mesh.dtr(0.5*i)) + 1
             rnd2 = np.random.normal(2*np.sin(mesh.dtr(i)),var)
             r.append(_wd_gen(depth_linspace[j],rnd1,rnd2))
