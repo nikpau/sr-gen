@@ -9,12 +9,11 @@ from collections import namedtuple
 from dataclasses import dataclass
 from math import isclose
 from typing import Tuple, TypeVar, Union
+from rivergen import options as op
 
 import numpy as np
 
-GP = 26 #  No. of grid points per segment width
-BPD = 20 # distance between gridpoints [m]
-BREADTH = 500 # [m] ((GP-1)*BPD)
+
 TWOPI = 2*np.pi
 PI = np.pi
 
@@ -88,8 +87,8 @@ def straight_segment(start: Union[Point,CurvedSegment,StraightSegment],
     if isinstance(start,(StraightSegment,CurvedSegment)):
         start = _endpoints(start,Curvature.left).open
     
-    x = np.linspace(start.x, start.x + BREADTH, GP)
-    y = np.linspace(start.y, start.y + length, length//BPD)
+    x = np.linspace(start.x, start.x + op.BREADTH, op.GP)
+    y = np.linspace(start.y, start.y + length, length//op.BPD)
     xx,yy  = np.meshgrid(x,y)
 
     # Positive angles rotate clockwise
@@ -127,12 +126,12 @@ def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
     anchor = _anchor(con,open,radius,prev_segment,curvature)
     
     # Number of equally spaced points along the circle
-    n_equal_points = abs(int((radius*rot)//BPD))
+    n_equal_points = abs(int((radius*rot)//op.BPD))
 
-    yy,xx = np.empty((GP,n_equal_points)),np.empty((GP,n_equal_points))
+    yy,xx = np.empty((op.GP,n_equal_points)),np.empty((op.GP,n_equal_points))
 
-    for i in range(GP):
-        r = radius + i*BPD
+    for i in range(op.GP):
+        r = radius + i*op.BPD
         x,y = _evenly_spaced_points(r,n_equal_points,rot,anchor)
         xx[i,:], yy[i,:] = x,y
 
@@ -150,7 +149,7 @@ def curved_segment(prev_segment: Union[StraightSegment,CurvedSegment],
         xx=xxal,yy=yyal,
         angle=prev_segment.angle+rot,
         curvature=curvature,
-        length=radius+((GP/2)*BPD)*rot
+        length=radius+((op.GP/2)*op.BPD)*rot
     )
     
 def _vertical_reflect(xx: MeshGrid, anchor: Point) -> MeshGrid:
