@@ -324,20 +324,20 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
     seg_list = []
     prev = straight_segment(Point(0,0), first_length, angle)
 
-    seg_list.append(f"Segment 0: {prev.__repr__()}")
+    seg_list.append(f"Segment 0: {prev!r}")
     out = copy.deepcopy(prev)
 
     for seg in range(nsegments-1):
         rnd_len = random.randint(400,2000)
         rnd_radius = random.randint(1000,5000)
-        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,45))
+        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,80))
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)
         else:
             new = straight_segment(prev,rnd_len,angle)
         
-        seg_list.append(f"Segment {seg+1}: {new.__repr__()}")
+        seg_list.append(f"Segment {seg+1}: {new!r}")
         out = combine(out,new)
         prev = new
 
