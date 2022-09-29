@@ -19,7 +19,7 @@ xx,yy  = np.meshgrid(x,y)
 
 # Function to generate water depth according 
 # to a flipped standard normal distribution
-f = lambda x: 10*np.exp(-0.005*(x+np.random.normal(0,2))**2)
+f = lambda x: 10*np.exp(-0.005*(x**2))
 depth_linspace = np.linspace(-BPD,BPD,GP)
 zz = [list(map(f,depth_linspace)) for _ in range(len(y))]
 

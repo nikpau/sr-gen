@@ -214,8 +214,7 @@ def _anchor(
         if ((prev_seg.angle > 0 and curvature == Curvature.left)
             or (prev_seg.angle < 0 and curvature == Curvature.right)):
             y_anchor = y1 + radius
-        else:
-            y_anchor = y1 - radius
+        else: y_anchor = y1 - radius
         return Point(x_anchor,y_anchor)
 
     lineq = lambda x: -(1/m)*x+(y1+(1/m)*x1)
@@ -236,8 +235,7 @@ def _anchor_switch(angle: float, curvature: Curvature) -> int:
     # Angle in quadrant I & II
     if (angle > -PI/2 and angle < PI/2):
         return 1 * cur
-    else:
-        return -1 * cur
+    else: return -1 * cur
 
 def _evenly_spaced_points(
     r: float, npoints: int, 
@@ -334,8 +332,7 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)
-        else:
-            new = straight_segment(prev,rnd_len,angle)
+        else: new = straight_segment(prev,rnd_len,angle)
         
         seg_list.append(f"Segment {seg+1}: {new!r}")
         out = combine(out,new)
