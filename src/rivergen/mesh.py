@@ -327,8 +327,8 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
 
     for seg in range(nsegments-1):
         rnd_len = random.randint(400,2000)
-        rnd_radius = random.randint(1000,5000)
-        rnd_angle = random.choice([-1,1])*dtr(random.randint(5,80))
+        rnd_radius = random.randint(500,2000)
+        rnd_angle = random.choice([-1,1])*dtr(random.randint(60,150))
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)

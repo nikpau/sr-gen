@@ -32,7 +32,7 @@ def current_map(m: mesh.BaseSegment, v: float) -> CurrentMap:
     liny = np.linspace(0,v,ones.shape[0])
 
     for row in range(ones.shape[0]):
-        xout[row] = ones[row] * linx[row]
-        yout[row] = ones[row] * -liny[row]
+        xout[row] =  linx[row]
+        yout[row] = -liny[row]
 
     return CurrentMap(xout, yout)
