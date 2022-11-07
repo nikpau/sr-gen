@@ -3,6 +3,7 @@ from typing import TypeVar
 from . import mesh, options
 import math
 import numpy as np
+from rivergen import options as op
 
 DepthMap = TypeVar("DepthMap")
 
@@ -23,7 +24,7 @@ def depth_map(m: mesh.BaseSegment, var: float) -> DepthMap:
     """
     out = []
     def _wd_gen(x,rnd1,rnd2):
-        return 7*math.exp(-5e-5*rnd1*(x+rnd2)**4)
+        return op.MAX_DEPTH*math.exp(-5e-5*rnd1*(x+rnd2)**4)
     
     depth_linspace = np.linspace(-15,15,options.GP) 
     

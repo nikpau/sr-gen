@@ -1,11 +1,12 @@
 import rivergen as rg
+from rivergen import options as op
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 import csv
 
 rg.options.GP = 26
-path = rg.build(10,1,1.5)
+path = rg.build(10,1,op.MAX_VEL)
 
 with open(f"{path}/coords.txt","r") as f:
     reader = csv.reader(f,delimiter=" ")
