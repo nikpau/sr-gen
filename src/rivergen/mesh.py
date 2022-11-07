@@ -4,7 +4,7 @@ This module generates straight and curved random mesh segments.
 Used as a 2D river generator.
 """
 import copy
-import random
+from random import randint, choice
 from collections import namedtuple
 from dataclasses import dataclass
 from math import isclose
@@ -317,8 +317,8 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
     """
     
     # First segment is always straight
-    first_length = random.randint(400,2000)
-    angle = random.choice([-1,1])*dtr(random.randint(5,80))
+    first_length = randint(400,2000)
+    angle = choice([-1,1])*dtr(randint(5,80))
     seg_list = []
     prev = straight_segment(Point(0,0), first_length, angle)
 
@@ -326,9 +326,9 @@ def generate(nsegments: int, filename: str = None) -> BaseSegment:
     out = copy.deepcopy(prev)
 
     for seg in range(nsegments-1):
-        rnd_len = random.randint(400,2000)
-        rnd_radius = random.randint(500,2000)
-        rnd_angle = random.choice([-1,1])*dtr(random.randint(60,150))
+        rnd_len = randint(*op.L_RANGE)
+        rnd_radius = randint(*op.R_RANGE)
+        rnd_angle = choice([-1,1])*dtr(randint(*op.ANG_RANGE))
         if seg%2==0: # alternate curved and straight segments
             new = curved_segment(prev,rnd_radius,rnd_angle)
             angle = _clip_to_pi(angle + rnd_angle)

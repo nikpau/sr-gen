@@ -4,8 +4,8 @@ from matplotlib import cm
 import numpy as np
 import csv
 
-rg.options.GP = 31
-path = rg.build(20,1,1.5)
+rg.options.GP = 26
+path = rg.build(10,1,1.5)
 
 with open(f"{path}/coords.txt","r") as f:
     reader = csv.reader(f,delimiter=" ")
@@ -32,7 +32,8 @@ wd = wd.reshape(-1,rg.options.GP)
 
 
 #plt.scatter(xx,yy,c=wd,cmap=cm.turbo, marker="1")
-plt.contour(xx,yy,wd,cmap=cm.turbo,levels = np.linspace(0,np.max(wd),10))
+plt.contourf(xx,yy,wd,cmap=cm.ocean,levels = np.linspace(0,np.max(wd),10))
 #plt.quiver(xx,yy,cx,cy,scale = 100)
+plt.tight_layout()
 plt.axis("equal")
 plt.show()
