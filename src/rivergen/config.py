@@ -40,4 +40,6 @@ class ConfigFile:
                 raise
 
     def export(self):
+        """Exports a ConfigFile object
+        to a configuration dataclass"""
         return Configuration(**self.args)
