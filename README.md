@@ -2,7 +2,7 @@
 
 ## Description
 
-This generator constructs arbitary looking rivers to be used as training and testing environments for simulation-based maritime applications. The generator alternates between straight and curved segments to construct the river. Several construction parameters can be changed by supplying a configuration file.
+This generator constructs arbitary-looking rivers to be used as training and testing environments for simulation-based maritime applications. The generator alternates between straight and curved segments to construct the river. Several construction parameters can be changed by supplying a configuration file.
 
 ## Usage
 
@@ -13,11 +13,11 @@ $ python -m rivergen -c /path/to/config.yaml
 ```
 If no config file is supplied the generator defaults to `configs/example.yaml`. The user is advised to first run the module with the default configuration to get used to the building process.
 
-Upon running, the generator will create a `gen` folder located in the programm root. For every new generation a new folder is created, named by a random hexadecimal UUID. This was done to avoid duplicate names when calling the generator rapidly e.g. during training. This behavior can be changed under `src/rivergen/export.py:84`.
+Upon running, the generator will create a `gen` folder located in the program root. For every new generation, a new folder is created, named by a random hexadecimal UUID. This was done to avoid duplicate names when calling the generator rapidly e.g. during training. This behavior can be changed under `src/rivergen/export.py:84`.
 
 ## Configuration files
 
-The building behavior can be altered via several parameters to be specified inside a `yaml` configuation file. A possible configuration could look like this:
+The building behavior can be altered via several parameters to be specified inside a `yaml` configuration file. A possible configuration could look like this:
 
 ```yaml
 NSEGMENTS: 10 # Total number of segements
