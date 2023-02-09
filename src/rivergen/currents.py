@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 from . import mesh
+from rivergen.config import Configuration
 
 @dataclass
 class CurrentMap:
@@ -9,7 +10,7 @@ class CurrentMap:
     x: np.ndarray
     y: np.ndarray 
 
-def current_map(m: mesh.BaseSegment, v: float) -> CurrentMap:
+def current_map(m: mesh.BaseSegment, config: Configuration) -> CurrentMap:
     """Generate a current map for a given mesh.
     Current direction follows a sinusoidal pattern
     over the length of the segment. Speed ranges
@@ -26,10 +27,10 @@ def current_map(m: mesh.BaseSegment, v: float) -> CurrentMap:
     ones= np.ones_like(m.yy)
     xout, yout = np.empty_like(ones), np.empty_like(ones)
 
-    linx = np.linspace(-v,v,ones.shape[0])
+    linx = np.linspace(-config.MAX_VEL,config.MAX_VEL,ones.shape[0])
     linx = list(map(np.sin,linx))
 
-    liny = np.linspace(0,v,ones.shape[0])
+    liny = np.linspace(0,config.MAX_VEL,ones.shape[0])
 
     for row in range(ones.shape[0]):
         xout[row] =  linx[row]

@@ -1,0 +1,25 @@
+# This is an example configuration 
+# file to demonstrate the building
+# process. 
+# 
+# Feel free to add your own configurations
+---
+NSEGMENTS: 10 # Total number of segements
+GP: 76 #  No. of grid points per segment width
+BPD: 20 # distance between gridpoints [m]
+LENGTHS: # Range for straight segments [m] (ξ)
+  LOW: 400
+  HIGH: 2000
+RADII: # Range of circle radii [m] (r)
+  LOW: 500
+  HIGH: 2000
+ANGLES: # Range of angles along the circles [deg] (ϕ)
+  LOW: 60
+  HIGH: 80
+MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
+MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
+VARIANCE: 2 # Variance for current and depth rng
+
+# Print information about the generation 
+# process to stdout
+VERBOSE: True

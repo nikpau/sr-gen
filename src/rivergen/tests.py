@@ -6,7 +6,7 @@ import numpy as np
 import csv
 
 rg.options.GP = 26
-path = rg.build(10,1,op.MAX_VEL)
+path = rg.export_to_file(10,2,op.MAX_VEL)
 
 with open(f"{path}/coords.txt","r") as f:
     reader = csv.reader(f,delimiter=" ")

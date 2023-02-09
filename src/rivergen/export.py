@@ -5,8 +5,7 @@ import threading
 import time
 import uuid
 import numpy as np
-from rivergen import mesh, depth, currents, options
-from datetime import datetime
+from rivergen import mesh, depth, currents,config
 from typing import Generator, Tuple
 
 def merge_coords(m: mesh.BaseSegment) -> Generator[Tuple, None, None]:
@@ -50,7 +49,7 @@ def write_to_file(
         for row in metrics:
             f.write("{} {} {} {} {} {} {}\n".format(*row))
 
-def build(segments: int, var: float, vel: float) -> os.PathLike:
+def export_to_file(config: config.Configuration) -> os.PathLike:
     """
     Package main function. Generates xy 
     coordinates, depths and current fields
@@ -87,27 +86,28 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
     os.mkdir(filepath)
 
     # Generate mesh
-    m = mesh.generate(segments,f"{parent}/{folder_name}/Segments")
-    if options.VERBOSE:
+    builder = mesh.Builder(config)
+    m = builder.generate(f"{parent}/{folder_name}/Segments")
+    if config.VERBOSE:
         print("Mesh generated.")
 
     # Generate depth map
-    d = depth.depth_map(m,var=var)
-    if options.VERBOSE:
+    d = depth.depth_map(m,config)
+    if config.VERBOSE:
         print("Depth map generated.")
 
     # Generate current map
-    c = currents.current_map(m,v=vel)
-    if options.VERBOSE:
+    c = currents.current_map(m,config)
+    if config.VERBOSE:
         print("Current map generated.")
 
     # Merge coordinates and metrics
     coords = merge_coords(m)
     metrics = merge_metrics(d,c)
-    if options.VERBOSE:
+    if config.VERBOSE:
         print("Merged.")
 
-    # Loading animation, beause why not?
+    # Loading animation
     done = False
     def animate():
         for c in itertools.cycle(['|', '/', '-', '\\']):
@@ -117,7 +117,7 @@ def build(segments: int, var: float, vel: float) -> os.PathLike:
             sys.stdout.flush()
             time.sleep(0.1)
         sys.stdout.write('\nDone!')
-    if options.VERBOSE:
+    if config.VERBOSE:
         t = threading.Thread(target=animate)
         t.start()
 
