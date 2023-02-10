@@ -5,7 +5,7 @@
 # Feel free to add your own configurations
 ---
 NSEGMENTS: 10 # Total number of segements
-GP: 76 #  No. of grid points per segment width
+GP: 50 #  No. of grid points per segment width
 BPD: 20 # distance between gridpoints [m]
 LENGTHS: # Range for straight segments [m] (ξ)
   LOW: 400

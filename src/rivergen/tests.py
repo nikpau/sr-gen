@@ -1,24 +1,27 @@
 from os import PathLike
+from .config import ConfigFile, Configuration
+from .export import export_to_file
 import shutil
-import rivergen as rg
+from .log import logger
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 import csv
 
-def _load(configpath: str) -> PathLike:
-    config = rg.config.ConfigFile(configpath).export()
-    path = rg.export_to_file(config)
+def _construct(configpath: str) -> tuple[PathLike,Configuration]:
+    config = ConfigFile(configpath).export()
+    return export_to_file(config), config
 
-    with open(f"{path}/coords.txt","r") as f:
+def _load(datapath: str):
+    with open(f"{datapath}/coords.txt","r") as f:
         reader = csv.reader(f,delimiter=" ")
         coords = list(reader)
 
-    with open(f"{path}/metrics.txt","r") as f:
+    with open(f"{datapath}/metrics.txt","r") as f:
         reader = csv.reader(f,delimiter=" ")
         metrics = list(reader)
 
-    return metrics, coords, config, path
+    return metrics, coords
 
 def _plot(metrics, coords, config):
     # Coordinate grid
@@ -38,11 +41,23 @@ def _plot(metrics, coords, config):
     plt.axis("equal")
     plt.show()
 
-def rivergen_test(configpath: str):
+def rivergen_rndm_viz(configpath: str):
     """
     Constructs and shows a test river. 
     Deletes it afterwards.
     """
-    *data, path = _load(configpath)
-    _plot(*data)
-    shutil.rmtree(path)
+    logger.info("Initializing random river testing.")
+    datapath,config = _construct(configpath)
+    logger.info(
+        f"River successfully constructed at '{datapath}'."
+    )
+    data = _load(datapath)
+    _plot(*data,config)
+    shutil.rmtree(datapath)
+    logger.info(
+        f"River successfully deleted at '{datapath}."
+    )
+
+def visualize(datapath: str, config: Configuration):
+    data = _load(datapath)
+    _plot(*data,config)

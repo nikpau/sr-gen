@@ -5,28 +5,28 @@ import threading
 import time
 import uuid
 import numpy as np
-from rivergen import mesh, depth, currents,config
+from rivergen import mesh, depth, currents,config 
+from .log import logger
 from typing import Generator, Tuple
 
 def merge_coords(m: mesh.BaseSegment) -> Generator[Tuple, None, None]:
-    """Merge coordinate mesh into a generator for further processing.
+    """Decompose mesh grid to 1d arrays of coordinates.
     """
     mx = np.hstack(m.xx)
     my = np.hstack(m.yy)
 
-    if not mx.shape == my.shape:
-        raise ValueError("Shapes of mesh, depth map and current map do not match.")
+    assert mx.shape == my.shape
 
     return zip(mx,my)
 
 def merge_metrics(d: depth.DepthMap,c: currents.CurrentMap) -> Generator[Tuple, None, None]:
     """Merge depth map and current map into a generator for further processing.
     """
-    d = np.hstack(d)
-    cx = np.hstack(c.x)
-    cy = np.hstack(c.y)
-    cvel = np.sqrt(cx**2 + cy**2)
-    zeros = np.zeros_like(cx)
+    d = np.hstack(d) # Depth map
+    cx = np.hstack(c.x) # Current velocity in x direction
+    cy = np.hstack(c.y) # Current velocity in y direction
+    cvel = np.sqrt(cx**2 + cy**2) # Resulting current velocity
+    zeros = np.zeros_like(cx) # Special formatting (not needed)
 
     l = [d,cx,cy,cvel,zeros]
 
@@ -55,7 +55,8 @@ def export_to_file(config: config.Configuration) -> os.PathLike:
     coordinates, depths and current fields
     from randomly sized curves and lines. 
     Saves the output as whitespace separated 
-    .txt file in a folder named by some random hex string.
+    `.txt` file in a folder named by a random 
+    hexadecimal string in the modules root.
     
     The files containing coordinates (coords.txt)
     have two columns [x,y].
@@ -89,23 +90,23 @@ def export_to_file(config: config.Configuration) -> os.PathLike:
     builder = mesh.Builder(config)
     m = builder.generate(f"{parent}/{folder_name}/Segments")
     if config.VERBOSE:
-        print("Mesh generated.")
+        logger.info("Mesh generated.")
 
     # Generate depth map
     d = depth.depth_map(m,config)
     if config.VERBOSE:
-        print("Depth map generated.")
+        logger.info("Depth map generated.")
 
     # Generate current map
     c = currents.current_map(m,config)
     if config.VERBOSE:
-        print("Current map generated.")
+        logger.info("Current map generated.")
 
     # Merge coordinates and metrics
     coords = merge_coords(m)
     metrics = merge_metrics(d,c)
     if config.VERBOSE:
-        print("Merged.")
+        logger.info("Merged.")
 
     # Loading animation
     done = False
@@ -113,10 +114,9 @@ def export_to_file(config: config.Configuration) -> os.PathLike:
         for c in itertools.cycle(['|', '/', '-', '\\']):
             if done:
                 break
-            sys.stdout.write('\rWriting to file... ' + c)
+            print('Writing to file... ' + c,end="\r")
             sys.stdout.flush()
             time.sleep(0.1)
-        sys.stdout.write('\nDone!')
     if config.VERBOSE:
         t = threading.Thread(target=animate)
         t.start()

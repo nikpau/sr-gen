@@ -12,16 +12,16 @@ class Range:
 
 @dataclass(frozen=True)
 class Configuration:
-    NSEGMENTS: int # Total number of segements
-    GP: int #  No. of grid points per segment width
-    BPD: int # distance between gridpoints [m]
-    LENGTHS: Range# Range for straight segments [m] (ξ)
-    RADII: Range# Range of circle radii [m] (r)
-    ANGLES: Range# Range of angles along the circles [deg] (ϕ)
-    MAX_DEPTH: int # River depth at deepest point [m] (κ)
-    MAX_VEL: int # Maximum current velocity [ms⁻¹] (ν)
-    VARIANCE: int # Variance for current and depth rng
-    VERBOSE: bool # Print process information about the generation 
+    NSEGMENTS: int  # Total number of segements
+    GP: int         # No. of grid points per segment width
+    BPD: int        # distance between gridpoints [m]
+    LENGTHS: Range  # Range for straight segments [m] (ξ)
+    RADII: Range    # Range of circle radii [m] (r)
+    ANGLES: Range   # Range of angles along the circles [deg] (ϕ)
+    MAX_DEPTH: int  # River depth at deepest point [m] (κ)
+    MAX_VEL: int    # Maximum current velocity [ms⁻¹] (ν)
+    VARIANCE: int   # Variance for current and depth rng
+    VERBOSE: bool   # Print process information about the generation 
 
 class ConfigFile:
     def __init__(self,path: str) -> None:

@@ -10,7 +10,7 @@ from math import isclose
 from random import choice, randint
 from typing import Tuple, TypeVar, Union
 from rivergen.config import Configuration
-
+from .log import logger
 import numpy as np
 
 TWOPI = 2*np.pi
