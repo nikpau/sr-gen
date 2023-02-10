@@ -14,7 +14,7 @@ $ pip install git+https://github.com/nikpau/sr-gen.git
 
 ## Usage
 
-This generator can called as a python module from the command line for standalone use, or can be part of a script
+This generator can be called as a python module from the command line for standalone use or can be part of a script.
 
 ### CLI
 ```console
@@ -32,7 +32,7 @@ If the visual inspection is desired but the result shall be kept, use the `-vc` 
 
 ### Script
 
-The generator can be included in any scipt by first registering a configuration and then exporting rivers generated from it to file. For example:
+The generator can be included in any script by first registering a configuration and then exporting rivers generated from it to a file. For example:
 
 ```python
 import rivergen
