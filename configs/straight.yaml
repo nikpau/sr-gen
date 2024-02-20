@@ -5,18 +5,18 @@
 # Feel free to add your own configurations
 ---
 NSEGMENTS: 10 # Total number of segements
-CANAL: False # If true, the river will be a straight canal (RADII and ANGLES will be ignored)
+CANAL: True # If true, the river will be a straight canal (RADII and ANGLES will be ignored)
 GP: 50 #  No. of grid points per segment width
 BPD: 20 # distance between gridpoints [m]
 LENGTHS: # Range for straight segments [m] (ξ)
   LOW: 400
   HIGH: 2000
 RADII: # Range of circle radii [m] (r)
-  LOW: 500
-  HIGH: 2000
+  LOW: 0
+  HIGH: 0
 ANGLES: # Range of angles along the circles [deg] (ϕ)
-  LOW: 60
-  HIGH: 80
+  LOW: 0
+  HIGH: 0
 MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
 MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
 VARIANCE: 2 # Variance for current and depth rng

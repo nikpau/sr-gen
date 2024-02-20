@@ -325,13 +325,17 @@ class Builder:
         out = copy.deepcopy(prev)
 
         for seg in range(self.c.NSEGMENTS-1):
-            rnd_len = randint(*self.c.LENGTHS())
-            rnd_radius = randint(*self.c.RADII())
-            rnd_angle = choice([-1,1])*dtr(randint(*self.c.ANGLES()))
-            if seg%2==0: # alternate curved and straight segments
-                new = self.curved_segment(prev,rnd_radius,rnd_angle)
-                angle = self._clip_to_pi(angle + rnd_angle)
-            else: new = self.straight_segment(prev,rnd_len,angle)
+            if self.c.CANAL:
+                rnd_len = self.c.LENGTHS.LOW
+                new = self.straight_segment(prev,rnd_len,angle)
+            else: 
+                rnd_len = randint(*self.c.LENGTHS())
+                rnd_radius = randint(*self.c.RADII())
+                rnd_angle = choice([-1,1])*dtr(randint(*self.c.ANGLES()))
+                if seg%2==0: # alternate curved and straight segments
+                    new = self.curved_segment(prev,rnd_radius,rnd_angle)
+                    angle = self._clip_to_pi(angle + rnd_angle)
+                else: new = self.straight_segment(prev,rnd_len,angle)
             
             seg_list.append(f"Segment {seg+1}: {new!r}")
             out = self.combine(out,new)

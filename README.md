@@ -18,7 +18,7 @@ This generator can be called as a python module from the command line for standa
 
 ### CLI
 ```console
-$ python -m rivergen -c /path/to/config.yaml
+$ rivergen -c /path/to/config.yaml
 ```
 The user is advised to first run the module with the default configuration `./configs/example.yaml` to get used to the building process.
 
@@ -55,6 +55,7 @@ The building behavior can be altered via several parameters to be specified insi
 
 ```yaml
 NSEGMENTS: 10 # Total number of segements
+CANAL: False # If true, the river will be a straight canal (ANGLES and RADII will be ignored)
 GP: 50 #  No. of grid points per segment width
 BPD: 20 # distance between gridpoints [m]
 LENGTHS: # Range for straight segments [m] (ξ)

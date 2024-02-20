@@ -13,6 +13,7 @@ class Range:
 @dataclass(frozen=True)
 class Configuration:
     NSEGMENTS: int  # Total number of segements
+    CANAL: bool     # Generate a straight canal (RADII and ANGLES are ignored)
     GP: int         # No. of grid points per segment width
     BPD: int        # distance between gridpoints [m]
     LENGTHS: Range  # Range for straight segments [m] (ξ)
