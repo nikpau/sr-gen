@@ -5,6 +5,7 @@ import threading
 import time
 import uuid
 import numpy as np
+from pathlib import Path
 from rivergen import mesh, depth, currents,config 
 from .log import logger
 from typing import Generator, Tuple
@@ -38,7 +39,7 @@ def merge_metrics(d: depth.DepthMap,c: currents.CurrentMap) -> Generator[Tuple, 
 def write_to_file(
     coords: Generator[Tuple, None, None],
     metrics: Generator[Tuple, None, None],
-    folder_name: os.PathLike) -> None:
+    folder_name: Path) -> None:
     """Write to file.
     """
     with open(f"{folder_name}/coords.txt", "w") as f:
@@ -75,7 +76,7 @@ def export_to_file(config: config.Configuration) -> os.PathLike:
         os.PathLike: path to folder containing generated files
     """
 
-    parent = "gen"
+    parent = Path(config.SAVEPATH).resolve()
     
     # Check if `gen` folder exists. If not, create it.
     if not os.path.isdir(parent):

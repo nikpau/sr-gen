@@ -23,6 +23,7 @@ class Configuration:
     MAX_VEL: int    # Maximum current velocity [ms⁻¹] (ν)
     VARIANCE: int   # Variance for current and depth rng
     VERBOSE: bool   # Print process information about the generation 
+    SAVEPATH: str   # Path to save the generated river
 
 class ConfigFile:
     def __init__(self,path: str) -> None:

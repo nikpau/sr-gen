@@ -21,6 +21,11 @@ MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
 MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
 VARIANCE: 2 # Variance for current and depth rng
 
+# Path to the directory where the
+# generated files will be saved.
+# Absolute paths are recommended.
+SAVEPATH: "/path/to/save/"
+
 # Print information about the generation 
 # process to stdout
 VERBOSE: True
