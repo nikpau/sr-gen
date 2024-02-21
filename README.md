@@ -14,21 +14,21 @@ $ pip install git+https://github.com/nikpau/sr-gen.git
 
 ## Usage
 
-This generator can be called as a python module from the command line for standalone use or can be part of a script.
+This generator can be called as a Python module from the command line for standalone use or can be part of a script.
 
 ### CLI
 ```console
 $ rivergen -c /path/to/config.yaml
 ```
-The user is advised to first run the module with the default configuration `./configs/example.yaml` to get used to the building process.
+You can run the module with the default configuration file at `./configs/example.yaml` to see an example of the building process.
 
-Upon running, the generator will create a `gen` folder located in the program root. For every new generation, a new folder is created, named by a random hexadecimal UUID. This was done to avoid duplicate names when calling the generator rapidly e.g. during training. This behavior can be changed under `src/rivergen/export.py:84`.
+Upon running, the generator will create a folder at the specified location from the configuration. For every new generation, a new folder is created, named by a random hexadecimal UUID. This was done to avoid duplicate names when calling the generator rapidly e.g. during training. This behavior can be changed under `src/rivergen/export.py:84`.
 
 #### Options
 
 In case you want to test a configuration without saving it permanently to disk, consider using the `-tc` flag, which temporarily constructs a river from the given configuration and plots it for visual inspection. After closing the plot window, the constructed river is deleted.
 
-If the visual inspection is desired but the result shall be kept, use the `-vc` flag, which skips the deletion of the river after inspection.
+If the visual inspection is desired but the result shall be kept, use the `-vc` flag, which keeps the files after inspection.
 
 ### Script
 
@@ -71,8 +71,13 @@ MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
 MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
 VARIANCE: 2 # Variance for current and depth rng
 
+# Path to the directory where the
+# generated files will be saved.
+# Absolute paths are recommended.
+SAVEPATH: "/path/to/save/"
+
 # Print information about the generation 
 # process to stdout
 VERBOSE: True
 ```
-> Please Note that the configuration file must contain all the fields from the example for the generator to work.
+> The configuration file must contain all fields from the example for the generator to work.
