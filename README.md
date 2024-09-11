@@ -44,7 +44,7 @@ config = rivergen.ConfigFile("/path/to/config.yaml").export()
 # and plot them for inspection
 for _ in range(10):
     exportpath = rivergen.export_to_file(config)
-    rivergen.test.visualize(exportpath,config)
+    rivergen.tests.visualize(exportpath,config)
 
 
 ```
