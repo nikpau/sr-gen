@@ -35,7 +35,7 @@ class ConfigFile:
 
     @staticmethod
     def _parse(path_to_yaml: str) -> dict[str,Any]:
-        with open(path_to_yaml, "r") as stream:
+        with open(path_to_yaml, "r", encoding = "utf-8") as stream:
             try:
                 return yaml.safe_load(stream)
             except yaml.YAMLError:
