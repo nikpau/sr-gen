@@ -9,12 +9,14 @@ from .utils import logger, ConfigFile
 from .config import Configuration
 
 def _load(datapath: str):
-    with open(f"{datapath}/coords.txt","r") as f:
-        reader = csv.reader(f,delimiter=" ")
+    with open(f"{datapath}/coords.csv","r") as f:
+        reader = csv.reader(f,delimiter=",")
+        next(reader) # Skip header
         coords = list(reader)
 
-    with open(f"{datapath}/metrics.txt","r") as f:
-        reader = csv.reader(f,delimiter=" ")
+    with open(f"{datapath}/metrics.csv","r") as f:
+        reader = csv.reader(f,delimiter=",")
+        next(reader) # Skip header
         metrics = list(reader)
 
     return metrics, coords
