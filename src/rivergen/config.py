@@ -1,5 +1,3 @@
-from typing import Any
-import yaml
 from dataclasses import dataclass
 
 @dataclass(frozen=True)
@@ -24,24 +22,5 @@ class Configuration:
     VARIANCE: int   # Variance for current and depth rng
     VERBOSE: bool   # Print process information about the generation 
     SAVEPATH: str   # Path to save the generated river
+    EXPORTER: str   # Exporter to use (e.g. "csv")
 
-class ConfigFile:
-    def __init__(self,path: str) -> None:
-        args = self._parse(path)
-        _ranges = ["LENGTHS","RADII","ANGLES"]
-        for keyword in _ranges:
-            args[keyword] = Range(**args[keyword])
-        self.args = args
-
-    @staticmethod
-    def _parse(path_to_yaml: str) -> dict[str,Any]:
-        with open(path_to_yaml, "r", encoding = "utf-8") as stream:
-            try:
-                return yaml.safe_load(stream)
-            except yaml.YAMLError:
-                raise
-
-    def export(self):
-        """Exports a ConfigFile object
-        to a configuration dataclass"""
-        return Configuration(**self.args)

@@ -24,7 +24,13 @@ VARIANCE: 2 # Variance for current and depth rng
 # Path to the directory where the
 # generated files will be saved.
 # Absolute paths are recommended.
-SAVEPATH: "/path/to/save/"
+SAVEPATH: "."
+
+# Name of the exporter class to use.
+# Exporters are defined in ./src/rivergen/exporters.py
+# and determine the file format of the generated
+# river.
+EXPORTER: "csv"
 
 # Print information about the generation 
 # process to stdout

@@ -1,16 +1,12 @@
-from os import PathLike
-from .config import ConfigFile, Configuration
-from .export import export_to_file
-import shutil
-from .log import logger
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import numpy as np
 import csv
+import shutil
+import numpy as np
 
-def _construct(configpath: str) -> tuple[PathLike,Configuration]:
-    config = ConfigFile(configpath).export()
-    return export_to_file(config), config
+from matplotlib import cm
+import matplotlib.pyplot as plt
+
+from .utils import logger, ConfigFile
+from .config import Configuration
 
 def _load(datapath: str):
     with open(f"{datapath}/coords.txt","r") as f:
@@ -29,14 +25,14 @@ def _plot(metrics, coords, config):
     yy = np.array([row[1] for row in coords],dtype=float).reshape(-1,config.GP)
 
     # Currents [not used for plotting]
-    cy = np.array([row[1] for row in metrics],dtype=float).reshape(-1,config.GP)
-    cx = np.array([row[2] for row in metrics],dtype=float).reshape(-1,config.GP)
+    cy = np.array([row[0] for row in metrics],dtype=float).reshape(-1,config.GP)
+    cx = np.array([row[1] for row in metrics],dtype=float).reshape(-1,config.GP)
 
     # Water depth
-    wd = np.array([row[3] for row in metrics],dtype=float).reshape(-1,config.GP)
+    wd = np.array([row[2] for row in metrics],dtype=float).reshape(-1,config.GP)
 
 
-    plt.contourf(xx,yy,wd,cmap=cm.ocean,levels = np.linspace(0,np.max(wd),10))
+    plt.contourf(xx,yy,wd,cmap=cm.ocean,levels = np.linspace(0,np.max(wd),20))
     plt.tight_layout()
     plt.axis("equal")
     plt.show()
@@ -47,7 +43,10 @@ def rivergen_rndm_viz(configpath: str):
     Deletes it afterwards.
     """
     logger.info("Initializing random river testing.")
-    datapath,config = _construct(configpath)
+    c = ConfigFile(configpath)
+    config = c.config
+    exporter = c.export()
+    datapath = exporter.export_to_file()
     logger.info(
         f"River successfully constructed at '{datapath}'."
     )

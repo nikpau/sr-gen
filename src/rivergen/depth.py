@@ -1,9 +1,10 @@
+import math
+import numpy as np
+
 from typing import TypeVar
 
 from . import mesh
-import math
-import numpy as np
-from rivergen.config import Configuration
+from .config import Configuration
 
 DepthMap = TypeVar("DepthMap")
 

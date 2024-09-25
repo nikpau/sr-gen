@@ -4,14 +4,14 @@ This module generates straight and curved random mesh segments.
 Used as a 2D river generator.
 """
 import copy
-from collections import namedtuple
-from dataclasses import dataclass
-from math import isclose
-from random import choice, randint
-from typing import Tuple, TypeVar, Union
-from rivergen.config import Configuration
-from .log import logger
 import numpy as np
+
+from math import isclose
+from dataclasses import dataclass
+from collections import namedtuple
+from random import choice, randint
+from .config import Configuration
+from typing import Tuple, TypeVar, Union
 
 TWOPI = 2*np.pi
 PI = np.pi

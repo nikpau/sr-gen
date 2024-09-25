@@ -1,9 +1,8 @@
-from rivergen import export
-from argparse import ArgumentParser
-from rivergen.config import ConfigFile
-import rivergen.tests as tests
-from .log import logger
 import sys
+import rivergen.tests as tests
+
+from argparse import ArgumentParser
+from rivergen.utils import ConfigFile, logger
 
 def main():
     parser = ArgumentParser()
@@ -50,16 +49,18 @@ def main():
         tests.rivergen_rndm_viz(args.config)
 
     elif args.visualize:
-        CONFIG = ConfigFile(args.config).export()
-        path = export.export_to_file(CONFIG)
+        cfile = ConfigFile(args.config)
+        CONFIG = cfile.config
+        exporter = cfile.export()
+        path = exporter.export_to_file()
         logger.info(
             f"River successfully constructed at '{path}'."
         )
         tests.visualize(path,CONFIG)
 
     elif not args.test and not args.visualize:
-        CONFIG = ConfigFile(args.config).export()
-        path = export.export_to_file(CONFIG)
+        exporter = ConfigFile(args.config).export()
+        path = exporter.export_to_file()
         logger.info(
             f"River successfully constructed at '{path}'."
         )

@@ -1,7 +1,9 @@
-from dataclasses import dataclass
 import numpy as np
+
+from dataclasses import dataclass
+
 from . import mesh
-from rivergen.config import Configuration
+from .config import Configuration
 
 @dataclass
 class CurrentMap:
