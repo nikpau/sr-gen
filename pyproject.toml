@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "rivergen"
+version = "1.2.2"
+description = "Procedural Road/River Segment Generator for NN Training"
+requires = { python = ">=3.10" }
+readme = "README.md"
+license = "MIT" 
+authors = [
+    "Niklas Paulig <niklas.paulig@tu-dresden.de>"
+]
+keywords = ["procedural generation", "road", "river", "NN training"]
+homepage = "https://github.com/nikpau/segGen"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+numpy = ">=1.19"
+dataclasses = "*"
+matplotlib = ">=3.5.3"
+triangle = "*"
+pyyaml = "*"
+
+[tool.poetry.scripts]
+rivergen = "rivergen.__main__:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

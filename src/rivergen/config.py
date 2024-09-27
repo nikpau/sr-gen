@@ -10,6 +10,7 @@ class Range:
 
 @dataclass(frozen=True)
 class Configuration:
+    SEED: int       # Seed for the random number generator
     NSEGMENTS: int  # Total number of segements
     CANAL: bool     # Generate a straight canal (RADII and ANGLES are ignored)
     GP: int         # No. of grid points per segment width

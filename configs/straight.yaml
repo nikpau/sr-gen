@@ -4,6 +4,7 @@
 # 
 # Feel free to add your own configurations
 ---
+SEED: 42 # Seed for the random number generator. If -1, the seed will be randomly generated.
 NSEGMENTS: 10 # Total number of segements
 CANAL: True # If true, the river will be a straight canal (RADII and ANGLES will be ignored)
 GP: 50 #  No. of grid points per segment width
