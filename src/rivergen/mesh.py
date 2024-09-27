@@ -5,11 +5,11 @@ Used as a 2D river generator.
 """
 import copy
 import numpy as np
+import random as rnd
 
 from math import isclose
 from dataclasses import dataclass
 from collections import namedtuple
-from random import choice, randint
 from .config import Configuration
 from typing import Tuple, TypeVar, Union
 
@@ -315,9 +315,14 @@ class Builder:
         Generate a sequence of random Mesh Segments
         """
         
+        # Set seed for reproducibility
+        if self.c.SEED  != -1:
+            np.random.seed(self.c.SEED)
+            rnd.seed(self.c.SEED)
+        
         # First segment is always straight
-        first_length = randint(*self.c.LENGTHS())
-        angle = choice([-1,1])*dtr(randint(5,80))
+        first_length = rnd.randint(*self.c.LENGTHS())
+        angle = rnd.choice([-1,1])*dtr(rnd.randint(5,80))
         seg_list = []
         prev = self.straight_segment(Point(0,0), first_length, angle)
 
@@ -329,9 +334,9 @@ class Builder:
                 rnd_len = self.c.LENGTHS.LOW
                 new = self.straight_segment(prev,rnd_len,angle)
             else: 
-                rnd_len = randint(*self.c.LENGTHS())
-                rnd_radius = randint(*self.c.RADII())
-                rnd_angle = choice([-1,1])*dtr(randint(*self.c.ANGLES()))
+                rnd_len = rnd.randint(*self.c.LENGTHS())
+                rnd_radius = rnd.randint(*self.c.RADII())
+                rnd_angle = rnd.choice([-1,1])*dtr(rnd.randint(*self.c.ANGLES()))
                 if seg%2==0: # alternate curved and straight segments
                     new = self.curved_segment(prev,rnd_radius,rnd_angle)
                     angle = self._clip_to_pi(angle + rnd_angle)
