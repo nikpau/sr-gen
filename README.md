@@ -86,6 +86,7 @@ The building behavior can be altered via several parameters to be specified insi
 A possible configuration could look like this:
 
 ```yaml
+SEED: -1 # Seed for random number generation. If "-1" seed is chosen randomly
 NSEGMENTS: 10 # Total number of segements
 CANAL: False # If true, the river will be a straight canal (ANGLES and RADII will be ignored)
 GP: 50 #  No. of grid points per segment width
