@@ -72,12 +72,12 @@ class CSVExporter(BaseExporter):
             for row in m_gen:
                 f.write("{}, {}, {}, {}\n".format(*row))
                 
-class FaRAOExporter(BaseExporter):
+class UCDExporter(BaseExporter):
     """
-    Exporter class to generate .inp files
-    used by the FaRAO project.
+    Exporter class to write the generated
+    data as an AVS-UCD (Unstructured Cell Data) file.
     """
-    NAME = "farao"
+    NAME = "ucd"
     def __init__(self,config: config.Configuration) -> None:
         super().__init__(config)
     
