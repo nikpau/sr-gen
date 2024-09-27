@@ -201,30 +201,6 @@ class UCDExporter(BaseExporter):
         tri = tr.triangulate(data, 'p')
         
         return tri
-        
-    def spatial_mask(
-        self,coords: np.ndarray, 
-        tri: Delaunay, poly: Polygon) -> np.ndarray:
-        """
-        
-        """
-        # Prepare data for matplotlib triangulation
-        xy = coords[:,1:3]
-        triang = mtri.Triangulation(xy[:, 0], xy[:, 1], tri.simplices)
-
-        # Mask triangles outside the river
-        mask = []
-        for simplex in tri.simplices:
-            triangle = xy[simplex]
-            centroid = np.mean(triangle, axis=0)
-            if poly.contains(Point(centroid)):
-                mask.append(False)
-            else:
-                mask.append(True)
-
-        triang.set_mask(mask)
-        
-        return triang
     
     def write_to_file(
         self, 
@@ -239,7 +215,7 @@ class UCDExporter(BaseExporter):
         tri_indices = np.arange(1, self.tri["triangles"].shape[0] + 1)
         meshdef = self._define_mesh(self.tri, coords)
 
-        with open(f"{folder_name}/rnd_rvr.inp", "w") as f:
+        with open(f"{folder_name}/generated.inp", "w") as f:
             f.write(self._header())
 
             # Prepare and write node data

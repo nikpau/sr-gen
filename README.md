@@ -1,8 +1,12 @@
 # Segmental environment generator for inland waterways
 
+![Example river](./example.png)
+
 ## Description
 
-This generator constructs arbitrary-looking rivers to be used as training and testing environments for simulation-based maritime applications. The generator alternates between straight and curved segments to construct the river. Several construction parameters can be changed by supplying a configuration file.
+Implementation of the generator used in [Paulig and Okhrin (2024)](https://doi.org/10.1016/j.oceaneng.2024.117207).
+
+This generator constructs arbitrary river-like point grids to be used as training and testing environments for simulation-based maritime applications. The generator alternates between straight and curved segments to construct a river. Currents and water depths are assigned to each grid point based on its parameters. The generator can be used as a standalone module or as part of a script.
 
 ## Installation
 
@@ -19,12 +23,25 @@ This generator can be called as a Python module from the command line for standa
 In any case you need to provide a configuration file in `yaml` format. It specifies the parameters for the river generation process.
 > The configuration file must contain all fields from the example for the generator to work. In depth explanations of the parameters can be found in the [Configuration files](#configuration-files) section. 
 
-In its default configuration, the generator will  utilize the `csv` exporter, which generates three `.csv` files:
+In its default configuration, the generator will utilize the `csv` exporter, which generates three `.csv` files:
 1. `coords.csv` containing the coordinates of the river segments
-2. `metrics.csv` containing the water depth ,current direction and current velocity at each grid point.
+2. `metrics.csv` containing the water depth, current direction, and current velocity at each grid point.
 3. `Segments.txt` containing the segment types used for the generation and their parameters.
 
-The exporter can be changed by specifying the `EXPORTER` field in the configuration file. The available exporters are defined in `src/rivergen/exporters.py`. Currently, the CSV exporter is the only one available, but custom exporters can easily be generated. The blueprint for creating a custom exporter can be found under `./src/rivergen/utils.py` in the `BaseExporter` class.
+The exporter can be changed by specifying the `EXPORTER` field in the configuration file. The available exporters are defined in `src/rivergen/exporters.py`. Currently, the available exporters are:
+
+### CSV Exporter
+- Generates two `.csv` files and one `.txt` file:
+  1. `coords.csv`
+  2. `metrics.csv`
+  3. `Segments.txt`
+
+### UCD Exporter
+- Generates a single UCD compliant file and one `.txt` file:
+  1. `generated.inp` contatining the river geometry and its accompanying metrics in UCD format. The mesh triangulation used a contrained Delaunay triangulation using triangles. Other mesh types are not supported natively, but can be added by modifying the `src/rivergen/export.py:UCDExporter::write_to_file()` method.
+  2. `Segments.txt` 
+
+Custom exporters can easily be generated. The blueprint for creating a custom exporter can be found under `./src/rivergen/utils.py` in the `BaseExporter` class.
 
 ### CLI
 ```console
