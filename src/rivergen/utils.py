@@ -73,7 +73,9 @@ class BaseExporter(ABC):
         """
         Main exporting function. Generates xy 
         coordinates, depths and current fields
-        from randomly sized curves and lines. 
+        from randomly sized curved and straigh
+        segments, according to the configuration
+        file. 
         
         The output is generated according to the
         specified exporter in the configuration
@@ -81,7 +83,7 @@ class BaseExporter(ABC):
         The folder name is a random hexadecimal 
         string.
         
-        Saves the output as whitespace separated 
+        The output is saved as a whitespace separated 
         `.txt` file in a folder named by a random 
         hexadecimal string in the modules root.
 
@@ -153,20 +155,16 @@ class ConfigFile:
     to register exporters dynamically.
     """
     def __init__(self,path: str) -> None:
-        args = self._parse(path)
-        _ranges = ["LENGTHS","RADII","ANGLES"]
-        for keyword in _ranges:
-            args[keyword] = config.Range(**args[keyword])
+        args = self.load_yaml(path)
+        for arg in ["LENGTHS","RADII","ANGLES"]:
+            args[arg] = config.Range(**args[arg])
         self.args = args
         self.config = config.Configuration(**args)
 
     @staticmethod
-    def _parse(path_to_yaml: str) -> dict[str,Any]:
+    def load_yaml(path_to_yaml: str) -> dict[str,Any]:
         with open(path_to_yaml, "r", encoding = "utf-8") as stream:
-            try:
-                return yaml.safe_load(stream)
-            except yaml.YAMLError:
-                raise
+            return yaml.safe_load(stream)
 
     def register_exporter(self) -> dict[str,BaseExporter]:
         # Import the module dynamically
