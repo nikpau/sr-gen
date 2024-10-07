@@ -223,7 +223,7 @@ class UCDExporter(BaseExporter):
         nrows = coords.shape[0] // RLEN
 
         # Create a grid of indices
-        idx = np.arange(1,coords.shape[0]+1).reshape(nrows, RLEN)
+        idx = np.arange(coords.shape[0]).reshape(nrows, RLEN)
 
         # Exclude the last row and last column to avoid index out of bounds
         idx_i = idx[:-1, :-1] # Lower left corner of each cell
