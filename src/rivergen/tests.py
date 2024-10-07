@@ -47,7 +47,7 @@ def rivergen_rndm_viz(configpath: str):
     logger.info("Initializing random river testing.")
     c = ConfigFile(configpath)
     config = c.config
-    exporter = c.export()
+    exporter = c.parse()
     datapath = exporter.export_to_file()
     logger.info(
         f"River successfully constructed at '{datapath}'."

@@ -196,7 +196,7 @@ class ConfigFile:
             registry[cls.NAME] = cls
         return registry
 
-    def export(self) -> BaseExporter:
+    def parse(self) -> BaseExporter:
         """
         Parses the configuration file 
         and returns its corresponding 
