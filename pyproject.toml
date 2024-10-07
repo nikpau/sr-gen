@@ -20,7 +20,6 @@ python = ">=3.10"
 numpy = ">=1.19"
 dataclasses = "*"
 matplotlib = ">=3.5.3"
-triangle = "*"
 pyyaml = "*"
 
 [tool.poetry.scripts]
