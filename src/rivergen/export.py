@@ -125,7 +125,8 @@ class UCDExporter(BaseExporter):
         if not all(map(lambda x: x.shape == l[0].shape,l)):
             raise ValueError("Shapes of depth map and current maps do not match.")  
         
-        return np.array([cy,cx,depth]).T
+        self.metrics = np.array([cy,cx,depth]).T
+        return self.metrics
     
     def _triangulate(self, coords: np.ndarray) -> np.ndarray:
         """
