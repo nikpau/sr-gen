@@ -127,90 +127,6 @@ class UCDExporter(BaseExporter):
         
         return np.array([cy,cx,depth]).T
     
-    def mesh_boundary(self, coords: np.ndarray) -> np.ndarray:
-        """
-        Constructs the boundary polygon of the mesh by connecting 
-        the outer points of each cross-section.
-
-        Parameters
-        ----------
-        coords : np.ndarray
-            An array of coordinates with shape (N, M), where N is 
-            the total number of points, and M >= 3.
-            Columns 0 and 1 (indices 0 and 1) correspond to the x 
-            and y coordinates respectively.
-
-        Returns
-        -------
-        boundary : np.ndarray
-            An array of shape (P, 2), where P is the number of boundary 
-            points plus one (for closing the polygon).
-            Each row contains the (x, y) coordinates of a boundary point.
-
-        Notes
-        -----
-        The boundary polygon is constructed by:
-        - Taking the first cross-section as the lower boundary.
-        - Connecting the outer (border) points (first and last points) 
-        of each intermediate cross-section to form the sides.
-        - Taking the last cross-section in reverse order as the upper 
-            boundary.
-        - Finally, the polygon is closed by returning to the starting 
-            point.
-
-        The array `coords` is expected to be organized such that it 
-        can be reshaped into cross-sections,
-        each containing `self.config.GP` points. The total number of 
-        points should be divisible by `self.config.GP`.
-
-        Examples
-        --------
-        >>> # Assuming self.config.GP = 4 (number of points per cross-section)
-        >>> coords = np.array([
-        ...     [x1_1, y1_1, z1_1],
-        ...     [x1_2, y1_2, z1_2],
-        ...     [x1_3, y1_3, z1_3],
-        ...     [x1_4, y1_4, z1_4],
-        ...     [x2_1, y2_1, z2_1],
-        ...     # More points...
-        ... ])
-        >>> boundary = self.mesh_boundary(coords)
-        """
-        logger.info("Constructing mesh boundary.")
-        # The shell of the polygon consists of the first and
-        # last cross section of the river as well as the border
-        # points of each other cross section.
-        xy = coords[:,:2]
-        
-        # Reshape xy array
-        xy = xy.reshape((-1,self.config.GP,2))
-
-        # Get the number of boundary points
-        n = 2*self.config.GP + 2*(xy.shape[0]-2)
-        
-        boundary = np.zeros((n+1,2))
-        boundary[-1] = xy[0][0] # Close the polygon
-        
-        # Lower boundary
-        boundary[:self.config.GP] = xy[0]
-
-        # First side
-        i = self.config.GP
-        for k in range(1,xy.shape[0]-1):
-            boundary[i] = xy[k][-1]
-            i += 1
-            
-        # Upper boundary
-        boundary[i:i+self.config.GP] = xy[-1][::-1]
-        i+= self.config.GP
-        
-        # Second side
-        for k in reversed(range(1,xy.shape[0]-1)):
-            boundary[i] = xy[k][0]
-            i+=1
-
-        return boundary
-    
     def _triangulate(self, coords: np.ndarray) -> np.ndarray:
         """
         Perform a simplified Delaunay triangulation of the river coordinates
@@ -225,11 +141,12 @@ class UCDExporter(BaseExporter):
         # Create a grid of indices
         idx = np.arange(coords.shape[0]).reshape(nrows, RLEN)
 
-        # Exclude the last row and last column to avoid index out of bounds
-        idx_i = idx[:-1, :-1] # Lower left corner of each cell
-        idx_i1 = idx[:-1, 1:] # Lower right corner of each cell
-        idx_RLEN = idx[1:, :-1] # Upper left corner of each cell
-        idx_RLEN1 = idx[1:, 1:] # Upper right corner of each cell
+        # Exclude the last row and last column to avoid index out of bounds.
+        # Add 1 to account for one-indexing in UCD files.
+        idx_i = idx[:-1, :-1] + 1 # Lower left corner of each cell
+        idx_i1 = idx[:-1, 1:] + 1 # Lower right corner of each cell
+        idx_RLEN = idx[1:, :-1] + 1 # Upper left corner of each cell
+        idx_RLEN1 = idx[1:, 1:] + 1 # Upper right corner of each cell
 
         # Flatten the indices
         idx_i_flat = idx_i.ravel()
@@ -256,21 +173,6 @@ class UCDExporter(BaseExporter):
 
         return vertex_indices
 
-    
-    def _reorder_map(self,coords: np.ndarray,tri: dict) -> np.ndarray:
-        """
-        During the triangulation process, the Triangle library
-        may reorder the coordinates.
-        Here, we generate a map to reorder the coordinates back
-        to their original order.
-        """
-        logger.info ("Reordering the coordinates.")
-        # Map from rows in tri['vertices'] to indices in coords
-        idx_map = {tuple(row): i for i, row in enumerate(tri["vertices"])}
-        
-        # Generate list of indices
-        return [idx_map[tuple(row)] for row in coords[:,:2]]
-    
     def write_to_file(
         self, 
         coords_in: np.ndarray,
@@ -356,7 +258,7 @@ class UCDExporter(BaseExporter):
         
         if show_triangles:
             # Plot the triangulation edges
-            ax.triplot(points[:, 0], points[:, 1], self.tri,
+            ax.triplot(points[:, 0], points[:, 1], self.tri - 1,
                        color=line_color, linewidth=line_width)
         
         if show_points:
