@@ -203,7 +203,15 @@ class ConfigFile:
         exporter. 
         """
         registry = self.register_exporter()
-        return registry[self.config.EXPORTER](self.config)
+        try:
+            return registry[self.config.EXPORTER](self.config)
+        except KeyError:    
+            raise ValueError(
+                f"No exporter named '{self.config.EXPORTER}' found. "
+                "Make sure the exporter is a class inheriting from `BaseExporter` "
+                "and is registered in the `export.py` module. "
+                f"Currently registered exporters: {list(registry.keys())}"
+            )
 ## FORMATTER ## 
 
 # Custom formatter
