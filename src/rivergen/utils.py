@@ -58,7 +58,8 @@ class BaseExporter(ABC):
 
     @abstractmethod
     def merge_metrics(
-        self,d: depth.DepthMap, 
+        self,
+        d: depth.DepthMap, 
         c: currents.CurrentMap) -> Generator[Tuple, None, None]:
         pass
     
@@ -68,12 +69,38 @@ class BaseExporter(ABC):
         m_gen: Generator[Tuple, None, None],
         folder_name: Path) -> None:
         pass
-
-    def export_to_file(self) -> os.PathLike:
+    
+    def export(self) -> os.PathLike:
         """
-        Main exporting function. Generates xy 
+        Exports a constructed river to a file.
+        """
+        parent = Path(self.config.SAVEPATH).resolve()
+        
+        # Check if `gen` folder exists. If not, create it.
+        if not os.path.isdir(parent):
+            os.mkdir(parent)
+
+        # Create folder
+        folder_name = uuid.uuid4().hex
+        filepath = f"{parent}/{folder_name}"
+        os.mkdir(filepath)
+
+        # Generate data
+        coords,metrics = self.construct()
+        
+        # Write to file
+        self.write_to_file(coords,metrics,filepath)
+
+        global done
+        done = True # Stop loading animation
+
+        return filepath
+
+    def construct(self) -> os.PathLike:
+        """
+        Main construction function. Generates xy 
         coordinates, depths and current fields
-        from randomly sized curved and straigh
+        from randomly sized curved and straight
         segments, according to the configuration
         file. 
         
@@ -92,20 +119,9 @@ class BaseExporter(ABC):
             generated files
         """
 
-        parent = Path(self.config.SAVEPATH).resolve()
-        
-        # Check if `gen` folder exists. If not, create it.
-        if not os.path.isdir(parent):
-            os.mkdir(parent)
-
-        # Create folder
-        folder_name = uuid.uuid4().hex
-        filepath = f"{parent}/{folder_name}"
-        os.mkdir(filepath)
-
         # Generate mesh
         builder = mesh.Builder(self.config)
-        m = builder.generate(f"{parent}/{folder_name}/Segments")
+        m = builder.generate()
         if self.config.VERBOSE:
             logger.info("Mesh generated.")
 
@@ -126,6 +142,7 @@ class BaseExporter(ABC):
             logger.info("Merged.")
 
         # Loading animation
+        global done
         done = False
         def animate():
             for c in itertools.cycle(['|', '/', '-', '\\']):
@@ -138,13 +155,7 @@ class BaseExporter(ABC):
             t = threading.Thread(target=animate)
             t.start()
 
-        # Write to file
-        self.write_to_file(coords,metrics,filepath)
-
-        done = True
-
-        return filepath
-
+        return coords, metrics
 
 class ConfigFile:
     """

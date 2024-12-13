@@ -310,7 +310,7 @@ class Builder:
         """Clip an angle to the range [-pi,pi]"""
         return (angle+PI) % (2*PI) - PI
 
-    def generate(self, filename: str = None) -> BaseSegment:
+    def generate(self) -> BaseSegment:
         """
         Generate a sequence of random Mesh Segments
         """
@@ -346,8 +346,6 @@ class Builder:
             out = self.combine(out,new)
             prev = new
 
-        if filename is not None:
-            np.savetxt(f"{filename}.txt",seg_list,fmt="%s")
         return out
 
 def rtd(angle: float) -> float:

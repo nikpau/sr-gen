@@ -48,7 +48,7 @@ def rivergen_rndm_viz(configpath: str):
     c = ConfigFile(configpath)
     config = c.config
     exporter = c.parse()
-    datapath = exporter.export_to_file()
+    datapath = exporter.export()
     logger.info(
         f"River successfully constructed at '{datapath}'."
     )

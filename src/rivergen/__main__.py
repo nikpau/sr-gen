@@ -52,7 +52,7 @@ def main():
         cfile = ConfigFile(args.config)
         CONFIG = cfile.config
         exporter = cfile.parse()
-        path = exporter.export_to_file()
+        path = exporter.export()
         logger.info(
             f"River successfully constructed at '{path}'."
         )
@@ -60,7 +60,7 @@ def main():
 
     elif not args.test and not args.visualize:
         exporter = ConfigFile(args.config).parse()
-        path = exporter.export_to_file()
+        path = exporter.export()
         logger.info(
             f"River successfully constructed at '{path}'."
         )
