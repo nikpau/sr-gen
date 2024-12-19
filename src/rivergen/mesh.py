@@ -8,7 +8,7 @@ import numpy as np
 import random as rnd
 
 from math import isclose
-from dataclasses import dataclass
+from attr import define
 from collections import namedtuple
 from .config import Configuration
 from typing import Tuple, TypeVar, Union
@@ -22,18 +22,18 @@ __all__ = ["generate"]
 Point = namedtuple("Point", ["x", "y"])
 MeshGrid = TypeVar("MeshGrid")
 
-@dataclass
+@define
 class Curvature:
     left: str = "left"
     right: str = "right"
 
-@dataclass
+@define
 class BaseSegment:
     xx: np.ndarray
     yy: np.ndarray
     length: float
 
-@dataclass
+@define
 class StraightSegment(BaseSegment):
     angle: float
 
@@ -45,7 +45,7 @@ class StraightSegment(BaseSegment):
         )
         return msg
     
-@dataclass
+@define
 class CurvedSegment(StraightSegment):
     curvature: Curvature
 
@@ -60,7 +60,7 @@ class CurvedSegment(StraightSegment):
 
 # Left/ Right endpoints of segment
 # where it's connected to previous segment
-@dataclass
+@define
 class RightEndpoints:
     """
     connected: Point on the "connected" end of the segment
@@ -69,7 +69,7 @@ class RightEndpoints:
     connected: Point
     open: Point
 
-@dataclass
+@define
 class LeftEndpoints(RightEndpoints):
     pass
     

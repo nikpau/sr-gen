@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from attr import define
 
-@dataclass(frozen=True)
+@define(frozen=True)
 class Range:
     LOW: float
     HIGH: float
@@ -8,7 +8,7 @@ class Range:
     def __call__(self) -> tuple[float,float]:
         return tuple([self.LOW,self.HIGH])
 
-@dataclass(frozen=True)
+@define(frozen=True)
 class Configuration:
     SEED: int       # Seed for the random number generator
     NSEGMENTS: int  # Total number of segements

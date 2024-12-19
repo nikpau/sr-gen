@@ -1,11 +1,11 @@
 import numpy as np
 
-from dataclasses import dataclass
+from attr import define
 
 from . import mesh
 from .config import Configuration
 
-@dataclass
+@define
 class CurrentMap:
     """Current map.
     """
