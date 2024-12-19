@@ -280,3 +280,101 @@ class UCDExporter(BaseExporter):
         ax.set_aspect('equal')
         plt.tight_layout()
         plt.show()
+
+class FlatProjectionBinaryWaterdepthExporter(BaseExporter):
+    """
+    Projects the generated river's water depth to a flat plane
+    and exports it as a binary map depending on some threshold.
+    
+    A chooseble threshold is used to determine the water depth
+    cutoff, i.e. all water depths below this threshold are
+    considered dry. After the projection, the water depth
+    is exported as a binary map, meaning that all water depths
+    below the threshold are set to zero and all water depths
+    above the threshold are set to one.
+    """
+    NAME = "flatbin"
+    
+    def __init__(self,config: config.Configuration) -> None:
+        super().__init__(config)
+    
+    def merge_coords(self,m: mesh.BaseSegment) -> None:
+        """
+        Coordinates are not needed for this exporter.
+        """
+        return None
+    
+    def merge_metrics(
+        self,depth: depth.DepthMap,
+        currents: currents.CurrentMap) -> Generator[Tuple, None, None]:
+        """
+        The exporter only relies on the depth map to create the binary map.
+        All other metrics are ignored.
+        """
+        return np.hstack(depth) # Depth map
+    
+    def export(self,threshold: float) -> np.ndarray:
+        """
+        Export the water depth as a binary map, where all water depths
+        below the threshold are set to zero and all water depths above
+        the threshold are set to one.
+        """
+        _, wd = self.construct()
+        wd = np.where(wd < threshold,0,1)
+        
+        # Project the water depth to a flat plane
+        width = self.config.GP
+        
+        wd = wd.reshape(-1,width)
+
+        return wd
+
+    def construct(self) -> Generator[Tuple, None, None]:
+        """
+        Main construction function. Generates xy 
+        coordinates, depths and current fields
+        from randomly sized curved and straight
+        segments, according to the configuration
+        file. 
+        
+        The output is generated according to the
+        specified exporter in the configuration
+        file.
+        The folder name is a random hexadecimal 
+        string.
+        
+        The output is saved as a whitespace separated 
+        `.txt` file in a folder named by a random 
+        hexadecimal string in the modules root.
+
+        Returns:
+            os.PathLike: path to folder containing 
+            generated files
+        """
+
+        # Generate mesh
+        builder = mesh.Builder(self.config)
+        m = builder.generate()
+        if self.config.VERBOSE:
+            logger.info("Mesh generated.")
+
+        # Generate depth map
+        d = depth.depth_map(m,self.config)
+        if self.config.VERBOSE:
+            logger.info("Depth map generated.")
+
+        # Generate current map
+        c = currents.current_map(m,self.config)
+        if self.config.VERBOSE:
+            logger.info("Current map generated.")
+
+        # Merge coordinates and metrics
+        coords = self.merge_coords(m)
+        metrics = self.merge_metrics(d,c)
+        if self.config.VERBOSE:
+            logger.info("Merged.")
+
+        return coords, metrics
+
+    def write_to_file(self, c_gen, m_gen, folder_name):
+        raise NotImplementedError("This exporter does not support writing to file.")

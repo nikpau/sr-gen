@@ -70,7 +70,7 @@ class BaseExporter(ABC):
         folder_name: Path) -> None:
         pass
     
-    def export(self) -> os.PathLike:
+    def export(self,*args,**kwargs) -> Any:
         """
         Exports a constructed river to a file.
         """
@@ -91,12 +91,9 @@ class BaseExporter(ABC):
         # Write to file
         self.write_to_file(coords,metrics,filepath)
 
-        global done
-        done = True # Stop loading animation
-
         return filepath
 
-    def construct(self) -> os.PathLike:
+    def construct(self) -> Generator[Tuple, None, None]:
         """
         Main construction function. Generates xy 
         coordinates, depths and current fields
@@ -140,20 +137,6 @@ class BaseExporter(ABC):
         metrics = self.merge_metrics(d,c)
         if self.config.VERBOSE:
             logger.info("Merged.")
-
-        # Loading animation
-        global done
-        done = False
-        def animate():
-            for c in itertools.cycle(['|', '/', '-', '\\']):
-                if done:
-                    break
-                print('Writing to file... ' + c,end="\r")
-                sys.stdout.flush()
-                time.sleep(0.1)
-        if self.config.VERBOSE:
-            t = threading.Thread(target=animate)
-            t.start()
 
         return coords, metrics
 
@@ -223,6 +206,7 @@ class ConfigFile:
                 "and is registered in the `export.py` module. "
                 f"Currently registered exporters: {list(registry.keys())}"
             )
+            
 ## FORMATTER ## 
 
 # Custom formatter

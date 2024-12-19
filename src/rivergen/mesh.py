@@ -188,7 +188,7 @@ class Builder:
                 xx,yy = np.flip(xx), np.flip(yy)
                 xxal,yyal = self._rotate(xx,yy,anchor,-(prev_angle+rotation))
         else:
-            if prev_angle > 0: # Quadrant II & III
+            if prev_angle > 0: # Quadrant I & IV
                 xxal, yyal = self._rotate(xx,yy,anchor,-prev_angle)
             else: # Quadrant II & III
                 xx = self._vertical_reflect(xx,anchor)
