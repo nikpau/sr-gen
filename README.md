@@ -65,7 +65,12 @@ The generator can be included in any script by first registering a configuration
 import rivergen
 
 # Get the exporter from the config file
-exporter = rivergen.ConfigFile("/path/to/config.yaml").parse()
+config_file = rg.ConfigFile("/path/to/config.yaml")
+config = config_file.config
+exporter = config_file.parse()
+
+# Print the configuration
+print(config)
 
 # Generate 10 random rivers from this configuration
 # and plot them for inspection
