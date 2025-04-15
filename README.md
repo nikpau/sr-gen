@@ -64,16 +64,13 @@ The generator can be included in any script by first registering a configuration
 ```python
 import rivergen
 
-# Construct a configuration from a yaml file
-configuration = rivergen.ConfigFile("/path/to/config.yaml").config
-
-# Create an exporter from the configuration
-exporter = configuration.export()
+# Get the exporter from the config file
+exporter = rivergen.ConfigFile("/path/to/config.yaml").parse()
 
 # Generate 10 random rivers from this configuration
 # and plot them for inspection
 for _ in range(10):
-    exportpath = exporter.export_to_file()
+    exportpath = exporter.export()
     rivergen.tests.visualize(exportpath,configuration)
 
 
