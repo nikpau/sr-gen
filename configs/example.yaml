@@ -22,6 +22,8 @@ MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
 MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
 VARIANCE: 2 # Variance for current and depth rng
 
+START_AT_UTM: -1 # If set to a UTM zone number, the generated river will be shifted to the center of that UTM zone.
+
 # Path to the directory where the
 # generated files will be saved.
 # Absolute paths are recommended.

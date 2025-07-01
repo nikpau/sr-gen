@@ -3,6 +3,7 @@ Mesh generating module.
 This module generates straight and curved random mesh segments.
 Used as a 2D river generator.
 """
+import utm
 import copy
 import numpy as np
 import random as rnd
@@ -345,7 +346,13 @@ class Builder:
             seg_list.append(f"Segment {seg+1}: {new!r}")
             out = self.combine(out,new)
             prev = new
-
+        
+        if self.c.START_AT_UTM != -1:
+            easting, northing = get_utm_zone_midpoint(self.c.START_AT_UTM)
+            out.xx += easting
+            out.yy += northing
+            seg_list.append(f"Converted to UTM Zone {self.c.START_AT_UTM} coordinates")
+        
         return out
 
 def rtd(angle: float) -> float:
@@ -355,3 +362,23 @@ def rtd(angle: float) -> float:
 def dtr(angle: float) -> float:
     """Convert degrees to radians"""
     return angle*PI/180
+
+def get_utm_zone_midpoint(zone_number: int) -> Point:
+    """
+    Return the midpoint of a UTM zone (1–60) in the UTM coordinate system,
+    defined as the point at the equator on the zone’s central meridian.
+    """
+    if not (1 <= zone_number <= 60):
+        raise ValueError("UTM zone must be between 1 and 60")
+
+    # Central meridian (°) of the zone:
+    # zone 1 → (0*6 - 180 + 3) = -177°
+    # zone 60 → (59*6 - 180 + 3) = +177°
+    central_meridian = (zone_number - 1) * 6 - 180 + 3
+
+    # Convert (lat=45, lon=central_meridian) into UTM coordinates 
+    # using a latitude of 45°N as an approximate midpoint
+    easting, northing, _, _ = utm.from_latlon(45, central_meridian)
+
+    return Point(easting, northing)
+    
