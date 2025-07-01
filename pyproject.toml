@@ -17,7 +17,8 @@ dependencies = [
   "numpy>=1.19",
   "attrs>=22.0.0",
   "matplotlib>=3.5.3",
-  "pyyaml"
+  "pyyaml",
+  "utm>=0.8.1",
 ]
 
 [project.scripts]
