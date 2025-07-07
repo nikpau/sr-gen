@@ -88,7 +88,7 @@ class BaseExporter(ABC):
         # Write to file
         self.write_to_file(coords,metrics,filepath)
 
-        return filepath
+        return filepath, coords, metrics
 
     def construct(self) -> Generator[Tuple, None, None]:
         """
