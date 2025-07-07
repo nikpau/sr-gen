@@ -9,6 +9,7 @@ import importlib
 from pathlib import Path
 from abc import ABC, abstractmethod
 from typing import Generator, Tuple, Any
+from numpy.typing import NDArray
 
 from . import mesh, depth, currents, config
 
@@ -67,9 +68,12 @@ class BaseExporter(ABC):
         folder_name: Path) -> None:
         pass
     
-    def export(self,*args,**kwargs) -> Any:
+    def export(self,*args,**kwargs) -> tuple[str, NDArray[Any], NDArray[Any]]:
         """
         Exports a constructed river to a file.
+        Returns:
+            File path to the folder containing the generated files,
+            coordinates and metrics as numpy arrays.
         """
         parent = Path(self.config.SAVEPATH).resolve()
         
