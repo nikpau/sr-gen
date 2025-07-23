@@ -26,16 +26,19 @@ def current_map(m: mesh.BaseSegment, config: Configuration) -> CurrentMap:
         CurrentMap: Current of same x or y shape as imput segment.
     """
     
-    ones= np.ones_like(m.yy)
+    ones = np.ones_like(m.yy)
     xout, yout = np.empty_like(ones), np.empty_like(ones)
 
-    linx = np.linspace(-config.MAX_VEL,config.MAX_VEL,ones.shape[0])
-    linx = list(map(np.sin,linx))
-
-    liny = np.linspace(0,config.MAX_VEL,ones.shape[0])
+    # Create Gaussian profile across width (columns)
+    width = ones.shape[1]
+    x_coords = np.linspace(-2, 2, width)
+    gaussian = np.exp(-x_coords**2)
+    
+    # Add lateral distortion with sine wave
+    distortion = np.sin(np.linspace(0, 4*np.pi, ones.shape[0])) * 0.2 * config.MAX_VEL
 
     for row in range(ones.shape[0]):
-        xout[row] =  linx[row]
-        yout[row] = -liny[row]
+        xout[row] = distortion[row]  # Lateral current distortion
+        yout[row] = -gaussian * config.MAX_VEL  # Downstream Gaussian profile
 
     return CurrentMap(xout, yout)
