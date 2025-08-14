@@ -118,7 +118,7 @@ class BaseExporter(ABC):
         """
 
         # Generate mesh
-        builder = mesh.Builder(self.config)
+        builder = mesh.BuildModeDispatcher(self.config).get_builder()
         m = builder.generate()
         if self.config.VERBOSE:
             logger.info("Mesh generated.")
