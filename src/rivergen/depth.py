@@ -23,6 +23,10 @@ def depth_map(m: mesh.BaseSegment, config: Configuration) -> DepthMap:
     Returns:
         DepthMap: DepthMap of same shape as m
     """
+    # If mode == "plane" we just sample from a Uniform distribution
+    if config.MODE == "plane":
+        return np.random.uniform(2, config.MAX_DEPTH, size=m.xx.shape)
+
     out = []
     def _wd_gen(x,steepness,location):
         return config.MAX_DEPTH*math.exp(
