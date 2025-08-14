@@ -6,7 +6,13 @@
 
 Implementation of the generator used in [Paulig and Okhrin (2024)](https://doi.org/10.1016/j.oceaneng.2024.117207).
 
-This generator constructs arbitrary river-like point grids to be used as training and testing environments for simulation-based maritime applications. The generator alternates between straight and curved segments to construct a river. Currents and water depths are assigned to each grid point based on its parameters. The generator can be used as a standalone module or as part of a script.
+This generator constructs arbitrary river-like point grids to be used as training and testing environments for simulation-based maritime applications. The generator can create three types of environments:
+
+1. **Rivers**: Alternating straight and curved segments to construct realistic river-like waterways
+2. **Canals**: Straight waterway segments for canal-like environments  
+3. **Planes**: Flat rectangular grids for general testing purposes
+
+Currents and water depths are assigned to each grid point based on the configuration parameters. The generator can be used as a standalone module or as part of a script.
 
 ## Installation
 
@@ -23,18 +29,16 @@ This generator can be called as a Python module from the command line for standa
 In any case you need to provide a configuration file in `yaml` format. It specifies the parameters for the river generation process.
 > The configuration file must contain all fields from the example for the generator to work. In depth explanations of the parameters can be found in the [Configuration files](#configuration-files) section. 
 
-In its default configuration, the generator will utilize the `csv` exporter, which generates three `.csv` files:
-1. `coords.csv` containing the coordinates of the river segments
-2. `metrics.csv` containing the water depth, current direction, and current velocity at each grid point.
-3. `Segments.txt` containing the segment types used for the generation and their parameters.
+In its default configuration, the generator will utilize the `csv` exporter, which generates two `.csv` files:
+1. `coords.csv` containing the x,y coordinates of the generated grid points
+2. `metrics.csv` containing the water depth, current velocity components (cx, cy), and total current velocity at each grid point
 
 The exporter can be changed by specifying the `EXPORTER` field in the configuration file. The available exporters are defined in `src/rivergen/exporters.py`. Currently, the available exporters are:
 
 ### CSV Exporter
-- Generates two `.csv` files and one `.txt` file:
-  1. `coords.csv`
-  2. `metrics.csv`
-  3. `Segments.txt`
+- Generates two `.csv` files:
+  1. `coords.csv` - Grid point coordinates (x, y)
+  2. `metrics.csv` - Water depth and current velocity data (cy, cx, depth, total_velocity)
 
 ### UCD Exporter
 - Generates a single UCD compliant file and one `.txt` file:
@@ -90,21 +94,23 @@ A possible configuration could look like this:
 ```yaml
 SEED: -1 # Seed for random number generation. If "-1" seed is chosen randomly
 NSEGMENTS: 10 # Total number of segements
-CANAL: False # If true, the river will be a straight canal (ANGLES and RADII will be ignored)
+MODE: "river" # Generation mode: "river", "canal", or "plane"
 GP: 50 #  No. of grid points per segment width
 BPD: 20 # distance between gridpoints [m]
-LENGTHS: # Range for straight segments [m] (ξ)
+EDGELEN: 1000 # Length of plane edges [m] (only used for "plane" mode)
+LENGTHS: # Range for straight segments [m] (ξ) (ignored in plane mode)
   LOW: 400
   HIGH: 2000
-RADII: # Range of circle radii [m] (r)
+RADII: # Range of circle radii [m] (r) (ignored in plane mode)
   LOW: 500
   HIGH: 2000
-ANGLES: # Range of angles along the circles [deg] (ϕ)
+ANGLES: # Range of angles along the circles [deg] (ϕ) (ignored in plane mode)
   LOW: 60
   HIGH: 80
 MAX_DEPTH: 7 # River depth at deepest point [m] (κ)
 MAX_VEL: 1 # Maximum current velocity [ms⁻¹] (ν)
 VARIANCE: 2 # Variance for current and depth rng
+START_AT_UTM: -1 # UTM zone to start the river at (-1 for no UTM conversion)
 
 # Path to the directory where the
 # generated files will be saved.
@@ -121,4 +127,18 @@ EXPORTER: "csv"
 # process to stdout
 VERBOSE: True
 ```
+
+### Generation Modes
+
+The generator supports three different generation modes via the `MODE` parameter:
+
+- **`"river"`**: Generates curved river segments with alternating straight and curved sections
+- **`"canal"`**: Generates straight canal segments (RADII and ANGLES parameters are ignored)
+- **`"plane"`**: Generates a flat plane grid using the EDGELEN parameter (NSEGMENTS, LENGTHS, RADII, and ANGLES are ignored)
+
+### Backward Compatibility
+
+For backward compatibility, configuration files using the old `CANAL: true/false` format are still supported and will be automatically converted:
+- `CANAL: true` → `MODE: "canal"`
+- `CANAL: false` → `MODE: "river"`
 > The configuration file must contain all fields from the example for the generator to work.
