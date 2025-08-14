@@ -8,6 +8,8 @@ import copy
 import numpy as np
 import random as rnd
 
+from abc import ABC, abstractmethod
+
 from math import isclose
 from attr import define
 from collections import namedtuple
@@ -16,9 +18,6 @@ from typing import Tuple, TypeVar, Union
 
 TWOPI = 2*np.pi
 PI = np.pi
-
-__all__ = ["generate"]
-
 
 Point = namedtuple("Point", ["x", "y"])
 MeshGrid = TypeVar("MeshGrid")
@@ -73,9 +72,42 @@ class RightEndpoints:
 @define
 class LeftEndpoints(RightEndpoints):
     pass
-    
+
+class _BuilderBase(ABC):
+    @abstractmethod
+    def generate(self) -> BaseSegment:
+        pass
+
+
 # Main -----------------------------------------------------
-class Builder:
+
+class PlaneBuilder(_BuilderBase):
+    def __init__(self, config: Configuration) -> None:
+        self.c = config
+        
+    def generate(self) -> BaseSegment:
+        """
+        Generate a plane segment with a mesh grid
+        """
+        self.c.GP = self.c.EDGELEN // self.c.BPD
+        x = np.linspace(
+            -self.c.EDGELEN/2,
+            self.c.EDGELEN/2,
+            self.c.GP
+        )
+        y = np.linspace(
+            -self.c.EDGELEN/2,
+            self.c.EDGELEN/2,
+            self.c.GP
+        )
+        xx, yy = np.meshgrid(x, y)
+        if self.c.START_AT_UTM != -1:
+            easting, northing = get_utm_zone_midpoint(self.c.START_AT_UTM)
+            xx += easting
+            yy += northing
+        return BaseSegment(xx=xx, yy=yy, length=self.c.EDGELEN)
+
+class RiverBuilder(_BuilderBase):
     def __init__(self,config: Configuration) -> None:
         self.c = config
 
@@ -221,11 +253,12 @@ class Builder:
             if ((prev_seg.angle > 0 and curvature == Curvature.left)
                 or (prev_seg.angle < 0 and curvature == Curvature.right)):
                 y_anchor = y1 + radius
-            else: y_anchor = y1 - radius
+            else: 
+                y_anchor = y1 - radius
             return Point(x_anchor,y_anchor)
 
-        lineq = lambda x: -(1/m)*x+(y1+(1/m)*x1)
-        
+        def lineq(x): return -(1/m)*x+(y1+(1/m)*x1)
+
         # Find x coordinate of point with distance `radius` apart
         # from point (x1,y1) using the circle equation
         x_anchor = x1 + s*(radius/np.sqrt(1+((1/m)**2)))
@@ -242,7 +275,8 @@ class Builder:
         # Angle in quadrant I & II
         if (angle > -PI/2 and angle < PI/2):
             return 1 * cur
-        else: return -1 * cur
+        else: 
+            return -1 * cur
 
     def _evenly_spaced_points(self,
         r: float, npoints: int, 
@@ -331,7 +365,7 @@ class Builder:
         out = copy.deepcopy(prev)
 
         for seg in range(self.c.NSEGMENTS-1):
-            if self.c.CANAL:
+            if self.c.MODE == "canal":
                 rnd_len = self.c.LENGTHS.LOW
                 new = self.straight_segment(prev,rnd_len,angle)
             else: 
@@ -341,7 +375,8 @@ class Builder:
                 if seg%2==0: # alternate curved and straight segments
                     new = self.curved_segment(prev,rnd_radius,rnd_angle)
                     angle = self._clip_to_pi(angle + rnd_angle)
-                else: new = self.straight_segment(prev,rnd_len,angle)
+                else: 
+                    new = self.straight_segment(prev,rnd_len,angle)
             
             seg_list.append(f"Segment {seg+1}: {new!r}")
             out = self.combine(out,new)
@@ -354,6 +389,24 @@ class Builder:
             seg_list.append(f"Converted to UTM Zone {self.c.START_AT_UTM} coordinates")
         
         return out
+
+# Just for cleaner config semantics
+CanalBuilder = RiverBuilder
+
+_mode_registry = {
+    "river": RiverBuilder,
+    "canal": CanalBuilder,
+    "plane": PlaneBuilder
+}
+
+class BuildModeDispatcher:
+    def __init__(self, config: Configuration) -> None:
+        self.c = config
+
+    def get_builder(self) -> Union[RiverBuilder, CanalBuilder, PlaneBuilder]:
+        builder_class = _mode_registry.get(self.c.MODE)
+        return builder_class(self.c)
+
 
 def rtd(angle: float) -> float:
     """Convert radians to degrees"""
