@@ -279,7 +279,7 @@ class UCDExporter(BaseExporter):
         ax.set_title('Delaunay Triangulation')
         ax.set_aspect('equal')
         plt.tight_layout()
-        plt.show()
+        plt.savefig("triangulation.png",dpi = 300)
 
 class FlatProjectionBinaryWaterdepthExporter(BaseExporter):
     """
