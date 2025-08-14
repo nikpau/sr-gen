@@ -7,8 +7,7 @@ from .config import Configuration
 
 @define
 class CurrentMap:
-    """Current map.
-    """
+    """Just for semantics"""
     x: np.ndarray
     y: np.ndarray 
 
@@ -25,10 +24,17 @@ def current_map(m: mesh.BaseSegment, config: Configuration) -> CurrentMap:
     Returns:
         CurrentMap: Current of same x or y shape as imput segment.
     """
-    
-    ones = np.ones_like(m.yy)
-    xout, yout = np.empty_like(ones), np.empty_like(ones)
 
+    # If mode == "plane" we just sample from a Uniform distribution
+    if config.MODE == "plane":
+        xout = np.random.uniform(-config.MAX_VEL, config.MAX_VEL, size=(m.yy.shape[0], m.xx.shape[1]))
+        yout = np.random.uniform(-config.MAX_VEL, config.MAX_VEL, size=(m.yy.shape[0], m.xx.shape[1]))
+        return CurrentMap(xout, yout)
+
+    ones = np.ones_like(m.yy)
+    xout = np.zeros_like(ones)
+    yout = np.zeros_like(ones)
+    
     # Create Gaussian profile across width (columns)
     width = ones.shape[1]
     x_coords = np.linspace(-2, 2, width)
