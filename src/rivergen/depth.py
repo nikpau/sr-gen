@@ -25,7 +25,26 @@ def depth_map(m: mesh.BaseSegment, config: Configuration) -> DepthMap:
     """
     # If mode == "plane" we just sample from a Uniform distribution
     if config.MODE == "plane":
-        return np.random.uniform(2, config.MAX_DEPTH, size=m.xx.shape)
+        # Smooth value noise approach
+        h, w = m.xx.shape
+        scale = 8  # larger -> smoother
+        ch, cw = max(2, h // scale), max(2, w // scale)
+
+        # Coarse random field
+        coarse = np.random.uniform(0, 1, size=(ch, cw))
+
+        # Bicubic-like smooth upsample via two 1D interpolations
+        y_lin = np.linspace(0, ch - 1, h)
+        x_lin = np.linspace(0, cw - 1, w)
+        # First interpolate rows, then columns
+        tmp = np.array([np.interp(x_lin, np.arange(cw), row) for row in coarse])
+        smooth = np.array([np.interp(y_lin, np.arange(ch), tmp[:, j]) for j in range(w)]).T
+
+        # Rescale to [3, MAX_DEPTH]
+        min_depth = 3
+        dmin, dmax = smooth.min(), smooth.max()
+        depth = min_depth + (smooth - dmin) / (dmax - dmin + 1e-9) * (config.MAX_DEPTH - min_depth)
+        return depth
 
     out = []
     def _wd_gen(x,steepness,location):
